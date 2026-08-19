@@ -1,0 +1,39 @@
+{
+  "change_language": "تغيير اللغة",
+  "switch_theme": "تبديل الثيم",
+  "security_privacy": "الأمان والخصوصية",
+  "log_out": "تسجيل الخروج",
+  "age": "العمر",
+  "gender": "الجنس",
+  "email_address": "البريد الإلكتروني",
+  "account_preferences": "إعدادات الحساب",
+
+  "operator_welcome": "مرحباً يا مشغل",
+  "upload_new_test": "رفع اختبار جديد",
+  "total_tests": "إجمالي الاختبارات",
+  "normal_results": "النتائج الطبيعية",
+  "need_follow_up": "يحتاج متابعة",
+  "following_doctors": "الأطباء المتابعون",
+  "recent_analytics": "التحليلات الأخيرة",
+  "view_ledger": "عرض السجل",
+  "comprehensive_blood_panel": "لوحة الدم الشاملة",
+  "thyroid_stimulating_hormone": "هرمون الغدة الدرقية",
+  "lipid_profile_beta_test": "ملف الدهون - اختبار بيتا",
+  "health_trajectory": "مسار الصحة",
+  "stability_index_up": "مؤشر الاستقرار ارتفع بنسبة 4.2%",
+
+  "normal": "طبيعي",
+  "elevated": "مرتفع",
+
+  "patient_phone_number": "رقم هاتف المريض",
+  "patient_email": "البريد الإلكتروني للمريض",
+  "national_id": "الرقم الوطني",
+  "access_cipher": "كلمة السر",
+  "initialize_node": "تهيئة النود",
+  "login": "تسجيل الدخول",
+  "signup": "إنشاء حساب",
+
+  "patient_id": "رقم المريض",
+  "change_language_title": "تغيير اللغة",
+  "account_preferences_title": "إعدادات الحساب"
+}

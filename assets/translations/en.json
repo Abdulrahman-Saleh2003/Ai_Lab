@@ -1,0 +1,39 @@
+{
+  "change_language": "Change Language",
+  "switch_theme": "Switch Theme",
+  "security_privacy": "Security & Privacy",
+  "log_out": "Log Out",
+  "age": "Age",
+  "gender": "Gender",
+  "email_address": "Email Address",
+  "account_preferences": "Account Preferences",
+
+  "operator_welcome": "Operator Welcome",
+  "upload_new_test": "Upload New Test",
+  "total_tests": "Total Tests",
+  "normal_results": "Normal Results",
+  "need_follow_up": "Need Follow-up",
+  "following_doctors": "Following Doctors",
+  "recent_analytics": "RECENT ANALYTICS",
+  "view_ledger": "View Ledger",
+  "comprehensive_blood_panel": "Comprehensive Blood Panel",
+  "thyroid_stimulating_hormone": "Thyroid Stimulating Hormone",
+  "lipid_profile_beta_test": "Lipid Profile Beta-Test",
+  "health_trajectory": "Health Trajectory",
+  "stability_index_up": "Stability index is up by 4.2%",
+
+  "normal": "NORMAL",
+  "elevated": "ELEVATED",
+
+  "patient_phone_number": "Patient Phone Number",
+  "patient_email": "Patient Email",
+  "national_id": "National ID",
+  "access_cipher": "Access Cipher",
+  "initialize_node": "INITIALIZE NODE",
+  "login": "Login",
+  "signup": "Sign Up",
+
+  "patient_id": "Patient ID",
+  "change_language_title": "Change Language",
+  "account_preferences_title": "Account Preferences"
+}

@@ -164,7 +164,7 @@ class HomeController extends Notifier<HomeState> {
         debugPrint("Check result failed, retrying in 10s...");
       },
       (response) {
-        final dynamic rawBody = response.data ?? response;
+        final dynamic rawBody = response is Map ? response : null;
         if (rawBody is! Map) return;
 
         final jobStatus = LabJobStatus.fromJson(Map<String, dynamic>.from(rawBody));
@@ -238,8 +238,7 @@ class HomeController extends Notifier<HomeState> {
         );
       },
       (data) {
-        final dynamic raw = data is Map ? data : (data.data ?? data);
-        final map = raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
+        final map = data is Map ? Map<String, dynamic>.from(data) : <String, dynamic>{};
 
         final jobId = map['job_id']?.toString();
 
@@ -304,10 +303,9 @@ class HomeController extends Notifier<HomeState> {
         debugPrint("Check analysis-result failed for $reportId, retrying...");
       },
       (response) {
-        final dynamic rawBody = response.data ?? response;
-        if (rawBody is! Map) return;
+        if (response is! Map) return;
 
-        final map = Map<String, dynamic>.from(rawBody);
+        final map = Map<String, dynamic>.from(response);
         final isAnalyzed = map['is_analyzed'] == true;
         final statusStr = map['status']?.toString() ?? '';
 
@@ -395,8 +393,7 @@ class HomeController extends Notifier<HomeState> {
         );
       },
       (response) {
-        final dynamic rawBody = response.data ?? response;
-        if (rawBody is! Map) {
+        if (response is! Map) {
           state = state.copyWith(
             reportsStatus: ReportsListStatus.error,
             reportsErrorMessage: "شكل البيانات القادمة من السيرفر غير متوقع",
@@ -404,7 +401,7 @@ class HomeController extends Notifier<HomeState> {
           return;
         }
 
-        final parsed = LabReportsResponse.fromJson(Map<String, dynamic>.from(rawBody));
+        final parsed = LabReportsResponse.fromJson(Map<String, dynamic>.from(response));
 
         state = state.copyWith(
           reportsStatus: ReportsListStatus.loaded,

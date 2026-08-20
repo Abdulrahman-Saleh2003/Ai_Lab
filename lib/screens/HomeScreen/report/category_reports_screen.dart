@@ -1,8 +1,10 @@
+import 'package:ai_lab/controller/category_selection/category_selection_provider.dart';
 import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/controller/home/home_state.dart';
 import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
 import 'package:ai_lab/screens/HomeScreen/Ocr/report_details_screen.dart';
+import 'package:ai_lab/screens/HomeScreen/report/report_comparison_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,10 +81,21 @@ class CategoryReportsScreen extends ConsumerWidget {
     return '$month ${date.day}, ${date.year} • $hour12:$minute $period';
   }
 
+  void _openComparison(BuildContext context, LabReportItem r1, LabReportItem r2) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReportComparisonScreen(report1: r1, report2: r2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allReports = ref.watch(homeProvider.select((s) => s.reports));
     final reportsStatus = ref.watch(homeProvider.select((s) => s.reportsStatus));
+    final selectionState = ref.watch(categorySelectionProvider);
+    final selectionCtrl = ref.read(categorySelectionProvider.notifier);
+    final scale = AppSize.scale(context);
 
     // فلترة التقارير التابعة لهذا القسم
     final categoryReports = allReports.where((r) {
@@ -108,14 +121,22 @@ class CategoryReportsScreen extends ConsumerWidget {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new, color: _primary, size: 20),
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          if (selectionState.isSelectionMode) {
+                            selectionCtrl.clearSelection();
+                          } else {
+                            Navigator.of(context).pop();
+                          }
+                        },
                       ),
                       const SizedBox(width: 4),
                       Icon(icon, color: _primary, size: 22),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          categoryTitle,
+                          selectionState.isSelectionMode
+                              ? "select_reports_to_compare".tr()
+                              : categoryTitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -131,23 +152,32 @@ class CategoryReportsScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _surfaceHigh,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _outlineVar),
-                  ),
-                  child: Text(
-                    '${categoryReports.length} ${'reports_count'.tr()}',
-                    style: const TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 12,
-                      color: _primarySoft,
-                      fontWeight: FontWeight.bold,
+                if (selectionState.isSelectionMode)
+                  TextButton(
+                    onPressed: selectionCtrl.clearSelection,
+                    child: Text(
+                      "cancel_selection".tr(),
+                      style: const TextStyle(color: _error, fontSize: 13),
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _surfaceHigh,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _outlineVar),
+                    ),
+                    child: Text(
+                      '${categoryReports.length} ${'reports_count'.tr()}',
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12,
+                        color: _primarySoft,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -181,22 +211,196 @@ class CategoryReportsScreen extends ConsumerWidget {
                       ),
                     ],
                   )
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
-                    itemCount: categoryReports.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      final report = categoryReports[index];
-                      return _CategoryReportCard(
-                        report: report,
-                        accentColor: _statusColor(report.status),
-                        statusLabel: _statusLabel(report.status),
-                        dateText: _formatDate(report.reportDate ?? report.createdAt),
-                        icon: icon,
-                      );
-                    },
+                : Column(
+                    children: [
+                      // ─── زر المقارنة السريعة لأحدث تقريرين ───
+                      if (!selectionState.isSelectionMode && categoryReports.length >= 2)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF1E2630), Color(0xFF13181F)],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _primary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: _primary.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.auto_awesome, color: _primary, size: 20),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "compare_latest_two".tr(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    const Text(
+                                      "مقارنة ذكية وفورية بين أحدث تحليلين مسجلين",
+                                      style: TextStyle(color: _onSurfaceVar, fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => _openComparison(
+                                  context,
+                                  categoryReports[0],
+                                  categoryReports[1],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _primary,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: Text(
+                                  "compare_reports".tr(),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // ─── قائمة البطاقات ───
+                      Expanded(
+                        child: ListView.separated(
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            12,
+                            16,
+                            selectionState.isSelectionMode ? 100 : 40,
+                          ),
+                          itemCount: categoryReports.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            final report = categoryReports[index];
+                            final isSelected = selectionState.isSelected(report.reportId);
+
+                            return _CategoryReportCard(
+                              report: report,
+                              accentColor: _statusColor(report.status),
+                              statusLabel: _statusLabel(report.status),
+                              dateText: _formatDate(report.reportDate ?? report.createdAt),
+                              icon: icon,
+                              isSelectionMode: selectionState.isSelectionMode,
+                              isSelected: isSelected,
+                              onTap: () {
+                                if (selectionState.isSelectionMode) {
+                                  final ok = selectionCtrl.toggleReport(report);
+                                  if (!ok) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("max_two_reports_selected".tr()),
+                                        backgroundColor: _warning,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              onLongPress: () {
+                                if (!selectionState.isSelectionMode) {
+                                  selectionCtrl.startSelection(report);
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
       ),
+      bottomNavigationBar: selectionState.isSelectionMode
+          ? Container(
+              padding: EdgeInsets.all(16 * scale.clamp(0.9, 1.2)),
+              decoration: BoxDecoration(
+                color: const Color(0xFF16181C),
+                border: const Border(top: BorderSide(color: _outlineVar)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: _primary.withValues(alpha: 0.4)),
+                      ),
+                      child: Text(
+                        "selected_count".tr(namedArgs: {'count': '${selectionState.count}'}),
+                        style: const TextStyle(
+                          color: _primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: selectionState.canCompare
+                            ? () {
+                                final r1 = selectionState.selectedReports[0];
+                                final r2 = selectionState.selectedReports[1];
+                                selectionCtrl.clearSelection();
+                                _openComparison(context, r1, r2);
+                              }
+                            : null,
+                        icon: const Icon(Icons.compare_arrows, color: Colors.black),
+                        label: Text(
+                          "compare_now".tr(),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _primary,
+                          disabledBackgroundColor: _primary.withValues(alpha: 0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
@@ -207,6 +411,10 @@ class _CategoryReportCard extends ConsumerWidget {
   final String statusLabel;
   final String dateText;
   final IconData icon;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const _CategoryReportCard({
     required this.report,
@@ -214,6 +422,10 @@ class _CategoryReportCard extends ConsumerWidget {
     required this.statusLabel,
     required this.dateText,
     required this.icon,
+    this.isSelectionMode = false,
+    this.isSelected = false,
+    this.onTap,
+    this.onLongPress,
   });
 
   static const _error = Color(0xFFFFB4AB);
@@ -226,14 +438,27 @@ class _CategoryReportCard extends ConsumerWidget {
       homeProvider.select((s) => s.analysisFor(report.reportId)),
     );
 
-    return Material(
-      color: Colors.transparent,
+    return InkWell(
+      onTap: isSelectionMode
+          ? onTap
+          : () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ReportDetailsScreen(report: report),
+                ),
+              );
+            },
+      onLongPress: onLongPress,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1C1F).withValues(alpha: 0.90),
+          color: isSelected
+              ? const Color(0xFF1F2B35)
+              : const Color(0xFF1A1C1F).withValues(alpha: 0.90),
           borderRadius: BorderRadius.circular(16),
-          border: Border(
-            left: BorderSide(color: accentColor, width: 3),
+          border: Border.all(
+            color: isSelected ? _primary : Colors.white.withValues(alpha: 0.05),
+            width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -251,6 +476,15 @@ class _CategoryReportCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (isSelectionMode)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Icon(
+                      isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                      color: isSelected ? _primary : const Color(0xFFBBC9CF),
+                      size: 24,
+                    ),
+                  ),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: report.hasImage
@@ -360,122 +594,20 @@ class _CategoryReportCard extends ConsumerWidget {
 
             const SizedBox(height: 14),
 
-            // ─── Action Button: OCR / Results ───
-            _buildActionButton(context, ref, analysisState),
+            // ─── Actions Row ───
+            if (!isSelectionMode)
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildOcrActionButton(context, ref, scale, analysisState),
+                  ),
+                  const SizedBox(width: 10),
+                  _buildDetailsButton(context, scale),
+                ],
+              ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildActionButton(
-    BuildContext context,
-    WidgetRef ref,
-    ReportAnalysisState analysisState,
-  ) {
-    if (!report.hasImage) {
-      return const Row(
-        children: [
-          Icon(Icons.info_outline, color: Color(0xFFBBC9CF), size: 16),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              "لا توجد صورة مرفقة بهذا التقرير لتحليلها",
-              style: TextStyle(fontSize: 12, color: Color(0xFFBBC9CF)),
-            ),
-          ),
-        ],
-      );
-    }
-
-    // إذا كان التقرير محللاً مسبقاً → زر عرض النتائج
-    if (report.isAnalyzed) {
-      return SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ReportDetailsScreen(report: report),
-              ),
-            );
-          },
-          icon: const Icon(Icons.remove_red_eye_outlined, color: _primary, size: 18),
-          label: const Text(
-            "عرض نتائج التحليل",
-            style: TextStyle(fontWeight: FontWeight.bold, color: _primary),
-          ),
-          style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: _primary),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          ),
-        ),
-      );
-    }
-
-    // إذا كان التحليل جارياً
-    if (analysisState.isBusy) {
-      final label = switch (analysisState.status) {
-        ReportAnalysisStatus.starting => "جاري بدء التحليل...",
-        ReportAnalysisStatus.analyzing => "جاري التحليل بالذكاء الاصطناعي...",
-        _ => "جاري المعالجة...",
-      };
-      return SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: null,
-          icon: const SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
-          ),
-          label: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _primary.withValues(alpha: 0.6),
-            disabledBackgroundColor: _primary.withValues(alpha: 0.6),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          ),
-        ),
-      );
-    }
-
-    // الحالة الافتراضية: زر تحليل بالذكاء الاصطناعي
-    final isRetry = analysisState.isError;
-    return Column(
-      children: [
-        if (isRetry && analysisState.errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              analysisState.errorMessage!,
-              style: const TextStyle(color: _error, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () =>
-                ref.read(homeProvider.notifier).analyzeReportInList(report),
-            icon: const Icon(Icons.document_scanner_outlined, color: Colors.black),
-            label: Text(
-              isRetry ? "حاول التحليل مرة أخرى" : "تحليل بالذكاء الاصطناعي (OCR)",
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _primary,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -484,10 +616,152 @@ class _CategoryReportCard extends ConsumerWidget {
       width: 46,
       height: 46,
       decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.10),
+        color: const Color(0xFF282A2D),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF3C494E)),
       ),
-      child: Icon(icon, color: accentColor, size: 22),
+      child: Icon(icon, color: _primary, size: 24),
     );
   }
-}
+
+  Widget _buildDetailsButton(BuildContext context, double scale) {
+    return Container(
+      height: 44,
+      decoration: BoxDecoration(
+        color: const Color(0xFF282A2D),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF3C494E)),
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.arrow_forward, color: Color(0xFFE2E2E6), size: 18),
+        tooltip: 'report_details'.tr(),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ReportDetailsScreen(report: report),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildOcrActionButton(
+    BuildContext context,
+    WidgetRef ref,
+    double scale,
+    ReportAnalysisState analysisState,
+  ) {
+    if (analysisState.isBusy) {
+      final label = switch (analysisState.status) {
+        ReportAnalysisStatus.starting => "preparing_image".tr(),
+        ReportAnalysisStatus.analyzing => "analyzing_ai".tr(),
+        _ => "analyzing_ai".tr(),
+      };
+      return Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF282A2D),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: _primary.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: _primary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: _primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final hasResult = report.aiResult != null || analysisState.status == ReportAnalysisStatus.ready;
+
+    if (hasResult) {
+      return ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ReportDetailsScreen(report: report),
+            ),
+          );
+        },
+        icon: const Icon(Icons.analytics_outlined, size: 16, color: Colors.black),
+        label: Text(
+          "view_analysis_results".tr(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontFamily: 'Cairo',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _primary,
+          elevation: 0,
+          minimumSize: const Size(0, 44),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
+
+    return OutlinedButton.icon(
+      onPressed: () {
+        if (!report.hasImage) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("no_image_attached".tr()),
+              backgroundColor: _error,
+            ),
+          );
+          return;
+        }
+        ref.read(homeProvider.notifier).analyzeReportInList(report);
+      },
+      icon: const Icon(Icons.document_scanner_outlined, size: 16, color: _primary),
+      label: Text(
+        "start_ocr_analysis".tr(),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          fontFamily: 'Cairo',
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: _primary,
+        ),
+      ),
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: _primary, width: 1.2),
+        minimumSize: const Size(0, 44),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }}
+

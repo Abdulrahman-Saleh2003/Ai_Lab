@@ -61,9 +61,11 @@ class LoginController extends Notifier<LoginState> {
         password: passwordController.text,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final Map? rawData = response is Map ? response : null;
+
+      if (rawData != null) {
         try {
-          final loginResponse = LoginResponse.fromJson(response.data);
+          final loginResponse = LoginResponse.fromJson(Map<String, dynamic>.from(rawData));
 
           // 1. حفظ التوكنات
           await CacheHelper.putString(

@@ -72,9 +72,10 @@ class ChatController extends Notifier<ChatState> {
             );
           },
           (data) {
-            final answer = data['answer']?.toString() ??
-                data['response']?.toString() ??
-                data['message']?.toString() ??
+            final Map map = data is Map ? data : {};
+            final answer = map['answer']?.toString() ??
+                map['response']?.toString() ??
+                map['message']?.toString() ??
                 'تمت معالجة استفسارك بنجاح.';
             final aiMessage = Message(
               id: DateTime.now().millisecondsSinceEpoch.toString(),

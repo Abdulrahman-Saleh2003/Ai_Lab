@@ -60,11 +60,11 @@ class ReportChatController extends Notifier<ReportChatState> {
           );
         },
         (data) {
-          final html = data['answer_html']?.toString() ??
-              data['response']?.toString() ??
-              data['answer']?.toString();
-          final raw = data['answer']?.toString() ?? data['message']?.toString();
-
+          final Map map = data is Map ? data : {};
+          final html = map['answer_html']?.toString() ??
+              map['response']?.toString() ??
+              map['answer']?.toString();
+          final raw = map['answer']?.toString() ?? map['message']?.toString();
           final updatedMessages = state.messages.map((m) {
             if (m.id == msgId) {
               return m.copyWith(

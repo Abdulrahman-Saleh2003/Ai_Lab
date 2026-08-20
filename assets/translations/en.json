@@ -167,5 +167,23 @@
   "skip": "SKIP",
   "accuracy_index": "Accuracy Index",
   "molecular_tracking": "Molecular Tracking",
-  "smart_alerts": "Smart Alerts"
+  "smart_alerts": "Smart Alerts",
+
+  "compare_reports": "Compare Reports",
+  "compare_latest_two": "Compare Latest 2",
+  "select_reports_to_compare": "Select 2 reports to compare",
+  "max_two_reports_selected": "You can only select up to 2 reports",
+  "select_at_least_two_reports": "At least 2 reports are required to compare",
+  "compare_now": "Start AI Comparison",
+  "cancel_selection": "Cancel Selection",
+  "current_report": "Current Report (Newer)",
+  "previous_report": "Previous Report (Older)",
+  "comparison_analysis": "AI Comparison Analysis",
+  "test_parameter": "Lab Parameter",
+  "previous_value": "Previous Value",
+  "current_value": "Current Value",
+  "change_delta": "Change",
+  "ask_about_comparison": "Ask about differences and changes between both reports...",
+  "fetching_comparison_data": "Fetching report data and comparing with AI...",
+  "selected_count": "Selected {count} of 2"
 }

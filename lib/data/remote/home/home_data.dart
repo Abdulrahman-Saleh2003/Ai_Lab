@@ -1,34 +1,62 @@
-import 'dart:io';
-
 import 'package:ai_lab/core/class/crud.dart';
 import 'package:ai_lab/core/constant/app_link_api.dart';
 
 class HomeData {
   final Crud crud;
 
-  HomeData({required this.crud});
+  HomeData({
+    required this.crud,
+  });
 
-  // ─── رفع الصورة (Multipart) ───
-  Future postData({required File image}) async {
+  Future postData({
+    required dynamic image,
+  }) async {
     return await crud.addRequestWithImageOne(
       linkUrl: AppLinkApi.analyze,
-      nameRequest: "image",
-      data: const {},
       image: image,
+      data: {},
     );
   }
 
-  // ─── سؤال السيرفر عن حالة التحليل (Polling) ───
   Future checkResult(String jobId) async {
     return await crud.getData(
       linkUrl: "${AppLinkApi.result}$jobId/",
     );
   }
 
-  // ─── جلب كل التقارير (سجل التحاليل السابقة) ───
   Future getAllReports() async {
     return await crud.getData(
       linkUrl: AppLinkApi.reports,
+    );
+  }
+
+  Future getReportsByType(String type) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByType}$type/",
+    );
+  }
+
+  Future getReportsByCategory(String category) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByCategory}$category/",
+    );
+  }
+
+  Future getReportsByPriority(String priority) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByPriority}$priority/",
+    );
+  }
+
+  Future getReportsByStatus(String status) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByStatus}$status/",
+    );
+  }
+
+  Future getReportDetail(String reportId) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportDetail}$reportId/",
     );
   }
 
@@ -45,19 +73,19 @@ class HomeData {
   }
 
   Future askFullAnalysisComparison({
+    required String reportId,
+    required String previousReportId,
     required String question,
-    required Map<String, dynamic> labJson,
+    Map<String, dynamic>? labJson,
     Map<String, dynamic>? previousJson,
   }) async {
     final payload = <String, dynamic>{
       "question": question,
-      "lab_json": labJson,
+      if (labJson != null) "lab_json": labJson,
+      if (previousJson != null) "previous_json": previousJson,
     };
-    if (previousJson != null) {
-      payload["previous_json"] = previousJson;
-    }
     return await crud.postData(
-      linkUrl: AppLinkApi.chatbotFullAnalysis,
+      linkUrl: "${AppLinkApi.chatbotFullAnalysis}$reportId/$previousReportId/",
       data: payload,
     );
   }
@@ -81,37 +109,6 @@ class HomeData {
   Future getReportAnalysisResult(String reportId) async {
     return await crud.getData(
       linkUrl: "${AppLinkApi.reportAnalyzeBase}$reportId/analysis-result/",
-    );
-  }
-
-  // ─── فلاتر ───
-  Future getReportsByType(String typeName) async {
-    return await crud.getData(
-      linkUrl: "${AppLinkApi.reportsByType}$typeName/",
-    );
-  }
-
-  Future getReportsByCategory(String categoryName) async {
-    return await crud.getData(
-      linkUrl: "${AppLinkApi.reportsByCategory}$categoryName/",
-    );
-  }
-
-  Future getReportsByPriority(String priorityName) async {
-    return await crud.getData(
-      linkUrl: "${AppLinkApi.reportsByPriority}$priorityName/",
-    );
-  }
-
-  Future getReportsByStatus(String statusName) async {
-    return await crud.getData(
-      linkUrl: "${AppLinkApi.reportsByStatus}$statusName/",
-    );
-  }
-
-  Future getReportDetail(String reportId) async {
-    return await crud.getData(
-      linkUrl: "${AppLinkApi.reportDetail}$reportId/",
     );
   }
 }

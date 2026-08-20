@@ -167,5 +167,23 @@
   "skip": "تخطي",
   "accuracy_index": "مؤشر الدقة",
   "molecular_tracking": "تتبع الجزيئات",
-  "smart_alerts": "تنبيهات ذكية"
+  "smart_alerts": "تنبيهات ذكية",
+
+  "compare_reports": "مقارنة التحاليل",
+  "compare_latest_two": "مقارنة أحدث تحليلين",
+  "select_reports_to_compare": "حدد تحليلين للمقارنة",
+  "max_two_reports_selected": "يمكنك تحديد تقريرين فقط للمقارنة",
+  "select_at_least_two_reports": "يجب أن يتوفر تحليلان على الأقل لإجراء المقارنة",
+  "compare_now": "بدء المقارنة الذكية",
+  "cancel_selection": "إلغاء التحديد",
+  "current_report": "التحليل الأحدث (الحالي)",
+  "previous_report": "التحليل السابق",
+  "comparison_analysis": "تحليل المقارنة بالذكاء الاصطناعي",
+  "test_parameter": "المؤشر المخبري",
+  "previous_value": "القيمة السابقة",
+  "current_value": "القيمة الحالية",
+  "change_delta": "التغير",
+  "ask_about_comparison": "اسأل عن الفروقات والتغيرات بين التحليلين...",
+  "fetching_comparison_data": "جاري استخراج بيانات التحليلين والمقارنة بالذكاء الاصطناعي...",
+  "selected_count": "تم تحديد {count} من 2"
 }

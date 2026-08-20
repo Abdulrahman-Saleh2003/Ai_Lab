@@ -29,15 +29,20 @@ class DioHelper {
   static Future<Response> myPost({
     required String endPont,
     required dynamic myData,
+    bool isFormData = false,
   }) async {
-    final formData = FormData.fromMap(myData as Map<String, dynamic>);
+    final dynamic dataToSend = (isFormData && myData is Map<String, dynamic>)
+        ? FormData.fromMap(myData)
+        : myData;
+
     final response = await dio.post(
       endPont,
-      data: formData,
+      data: dataToSend,
       options: Options(
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
+          if (!isFormData) 'Content-Type': 'application/json',
         },
         followRedirects: false,
         validateStatus: (status) => status != null && status < 500,
@@ -50,7 +55,9 @@ class DioHelper {
     required String endPont,
     required dynamic myData,
   }) async {
-    final formData = FormData.fromMap(myData as Map<String, dynamic>);
+    final formData = myData is Map<String, dynamic>
+        ? FormData.fromMap(myData)
+        : myData;
     final response = await dio.post(
       endPont,
       data: formData,
@@ -76,6 +83,7 @@ class DioHelper {
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
         followRedirects: false,
         validateStatus: (status) => status != null && status < 500,

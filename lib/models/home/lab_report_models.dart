@@ -53,6 +53,24 @@ class LabTest {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'alias': alias,
+      'test_name': testName,
+      'value': value,
+      'unit': unit,
+      'reference_range': referenceRange,
+      'flag': flag,
+      'reference_range_source': referenceRangeSource,
+      if (matchedReferenceTest != null) 'matched_reference_test': matchedReferenceTest,
+      if (matchConfidence != null) 'match_confidence': matchConfidence,
+      'status': status,
+      'status_ar': statusAr,
+      if (distanceFromNormal != null) 'distance_from_normal': distanceFromNormal,
+      if (timestamp != null) 'timestamp': timestamp,
+    };
+  }
+
   String get displayTitle => alias.isNotEmpty ? alias : testName;
   bool get isNormal => status.toLowerCase().contains('normal');
   bool get isCritical => status.toLowerCase().contains('critical');
@@ -92,6 +110,13 @@ class ReportPanel {
           : const [],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'panel_name': panelName,
+      'tests': tests.map((t) => t.toJson()).toList(),
+    };
+  }
 }
 
 class CurrentReport {
@@ -111,6 +136,13 @@ class CurrentReport {
     );
   }
 
+  Map<String, dynamic> toJson({String reportType = 'CBC'}) {
+    return {
+      'report_type': reportType,
+      'panels': panels.map((p) => p.toJson()).toList(),
+    };
+  }
+
   List<LabTest> get allTests => panels.expand((p) => p.tests).toList();
 }
 
@@ -128,6 +160,10 @@ class LabAnalysisResult {
             : const {},
       ),
     );
+  }
+
+  Map<String, dynamic> toJson({String reportType = 'CBC'}) {
+    return currentReport.toJson(reportType: reportType);
   }
 
   List<LabTest> get tests => currentReport.allTests;

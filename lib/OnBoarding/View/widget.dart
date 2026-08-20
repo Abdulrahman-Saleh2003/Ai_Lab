@@ -1,4 +1,5 @@
-export  'package:flutter/material.dart';
+export 'package:flutter/material.dart';
+export 'package:ai_lab/core/constant/app_size.dart';
 export 'package:ai_lab/controller/OnBoarding/onboarding_provider.dart';
 export 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,6 +52,6 @@ export 'package:ai_lab/OnBoarding/View/onboarding2/build_feature_item.dart';
 
 
 export 'package:ai_lab/OnBoarding/View/onboarding3/build_stream_item.dart';
-export 'package:ai_lab/OnBoarding/View/onboarding3/build_alertItem.dart';
+export 'package:ai_lab/OnBoarding/View/onboarding3/build_alert_item.dart';
 export 'package:ai_lab/OnBoarding/View/onboarding3/mini_bar.dart';
 export 'package:ai_lab/OnBoarding/View/onboarding4/build_intelligence_card.dart';

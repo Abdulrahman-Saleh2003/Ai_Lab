@@ -1,19 +1,9 @@
-
-
 import 'package:ai_lab/core/class/status_request.dart';
 
-StatusRequest handingDataController( response) {
+StatusRequest handingDataController(dynamic response) {
   if (response is StatusRequest) {
-    // print("handlingDataController");
-    // print(response);
     return response;
   } else {
-    return StatusRequest
-    .success;
+    return StatusRequest.success;
   }
 }
-
-
-
-
-

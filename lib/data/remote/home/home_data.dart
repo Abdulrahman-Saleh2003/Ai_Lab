@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:ai_lab/core/class/crud.dart';
@@ -11,16 +10,8 @@ class HomeData {
 
   // ─── رفع الصورة (Multipart) ───
   Future postData({required File image}) async {
-
-    print("____________________________________");
-
-    print(    AppLinkApi.analyze);
-    print("____________________________________");
-
     return await crud.addRequestWithImageOne(
       linkUrl: AppLinkApi.analyze,
-      // ⚠️ مهم: عدّل "image" ليطابق تماماً اسم الحقل يلي الـ Django API
-      // متوقعه (شوف serializer/view تبع /api/lab-reports/analyze/)
       nameRequest: "image",
       data: const {},
       image: image,
@@ -29,12 +20,6 @@ class HomeData {
 
   // ─── سؤال السيرفر عن حالة التحليل (Polling) ───
   Future checkResult(String jobId) async {
-
-    print("____________________________________");
-
-    print(    "${AppLinkApi.result}$jobId/");
-    print("____________________________________");
-
     return await crud.getData(
       linkUrl: "${AppLinkApi.result}$jobId/",
     );
@@ -45,28 +30,37 @@ class HomeData {
     return await crud.getData(
       linkUrl: AppLinkApi.reports,
     );
-
-
   }
-
-
-
-
 
   Future askReportQuestion({
     required String reportId,
     required String question,
   }) async {
     return await crud.postData(
-      linkUrl: "${AppLinkApi.chatReportBase}$reportId/",
+      linkUrl: "${AppLinkApi.chatbotLlama}$reportId/",
       data: <String, dynamic>{
         "question": question,
       },
     );
   }
 
-
-  // ################
+  Future askFullAnalysisComparison({
+    required String question,
+    required Map<String, dynamic> labJson,
+    Map<String, dynamic>? previousJson,
+  }) async {
+    final payload = <String, dynamic>{
+      "question": question,
+      "lab_json": labJson,
+    };
+    if (previousJson != null) {
+      payload["previous_json"] = previousJson;
+    }
+    return await crud.postData(
+      linkUrl: AppLinkApi.chatbotFullAnalysis,
+      data: payload,
+    );
+  }
 
   /// POST /patients/my-reports/{reportId}/analyze/
   Future startReportAnalysis(String reportId) async {
@@ -89,17 +83,6 @@ class HomeData {
       linkUrl: "${AppLinkApi.reportAnalyzeBase}$reportId/analysis-result/",
     );
   }
-
-
-
-
-
-
-
-
-
-
-  // ######################
 
   // ─── فلاتر ───
   Future getReportsByType(String typeName) async {

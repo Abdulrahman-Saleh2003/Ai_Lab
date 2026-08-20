@@ -1,21 +1,22 @@
+import 'package:ai_lab/core/constant/app_size.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class InitializeButton extends StatelessWidget {
   final VoidCallback? onPressed;
-  final String text;
+  final String? text;
   final bool isLoading;
 
   const InitializeButton({
     super.key,
     required this.onPressed,
-    this.text = 'INITIALIZE NODE',
+    this.text,
     this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return SizedBox(
       width: double.infinity,
@@ -29,39 +30,35 @@ class InitializeButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-
         child: isLoading
             ? SizedBox(
-          height: 24 * scale,
-          width: 24 * scale,
-          child: CircularProgressIndicator(
-            color: Colors.black,
-            strokeWidth: 2.5 * scale,
-          ),
-        )
-
+                height: 24 * scale,
+                width: 24 * scale,
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                  strokeWidth: 2.5 * scale,
+                ),
+              )
             : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.power_settings_new,
-              color: Colors.black,
-              size: 22 * scale,
-            ),
-
-            SizedBox(width: 10 * scale),
-
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 14 * scale,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5 * scale,
-                color: Colors.black,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.power_settings_new,
+                    color: Colors.black,
+                    size: 22 * scale,
+                  ),
+                  SizedBox(width: 10 * scale),
+                  Text(
+                    text ?? 'initialize_node'.tr().toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 14 * scale,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5 * scale,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

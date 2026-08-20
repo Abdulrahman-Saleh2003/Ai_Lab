@@ -1,5 +1,3 @@
-
-
 import 'package:ai_lab/OnBoarding/View/widget.dart';
 import 'package:ai_lab/core/constant/app_color.dart';
 
@@ -8,8 +6,7 @@ class BuildAiBrainVisualization extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return Container(
       height: 380 * scale,
@@ -27,13 +24,12 @@ class BuildAiBrainVisualization extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppMyColor.blueColor.withValues(alpha:0.25),
+                  AppMyColor.blueColor.withValues(alpha: 0.25),
                   Colors.transparent,
                 ],
               ),
             ),
           ),
-
           ClipRRect(
             borderRadius: BorderRadius.circular(20 * scale),
             child: Image.asset(
@@ -42,8 +38,7 @@ class BuildAiBrainVisualization extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-
-          // 📊 Accuracy Overlay
+          // Accuracy Overlay
           Positioned(
             bottom: 40 * scale,
             child: Container(
@@ -52,10 +47,10 @@ class BuildAiBrainVisualization extends StatelessWidget {
                 vertical: 14 * scale,
               ),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha:0.75),
+                color: Colors.black.withValues(alpha: 0.75),
                 borderRadius: BorderRadius.circular(16 * scale),
                 border: Border.all(
-                  color: AppMyColor.blueColor.withValues(alpha:0.4),
+                  color: AppMyColor.blueColor.withValues(alpha: 0.4),
                   width: 1.5 * scale,
                 ),
               ),

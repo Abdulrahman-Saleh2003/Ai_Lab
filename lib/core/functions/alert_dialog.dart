@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-alertDialog({
+Future<dynamic> alertDialog({
   String title = 'Alert',
   String middleText = 'Do you want exit from this app',
   VoidCallback? onPressed,
@@ -15,11 +15,9 @@ alertDialog({
     content: content,
     titleStyle: Theme.of(Get.context!).textTheme.headlineLarge!.copyWith(
           fontSize: 24,
-          // color: themeController.isDarkTheme.value ? Colors.white : null,
         ),
     middleTextStyle: Theme.of(Get.context!).textTheme.headlineLarge!.copyWith(
           fontSize: 16,
-          // color: themeController.isDarkTheme.value ? Colors.white : null,
         ),
     backgroundColor: Theme.of(Get.context!).scaffoldBackgroundColor,
     actions: withoutButton
@@ -36,7 +34,6 @@ alertDialog({
                 'Cancel',
               ),
             ),
-            // const SizedBox(width: 16),
             ElevatedButton(
               onPressed: onPressed ??
                   () {

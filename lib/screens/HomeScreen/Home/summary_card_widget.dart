@@ -20,8 +20,7 @@ class SummaryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return GestureDetector(
       onTap: onTap,
@@ -30,7 +29,7 @@ class SummaryCardWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF1A1C1F),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: accentColor.withOpacity(0.15)),
+          border: Border.all(color: accentColor.withValues(alpha: 0.15)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

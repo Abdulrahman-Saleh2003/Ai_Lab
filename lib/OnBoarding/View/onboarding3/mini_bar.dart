@@ -4,7 +4,7 @@ class MiniBar extends StatelessWidget {
   final double height;
   final bool isHighlighted;
 
-  const MiniBar({required this.height, this.isHighlighted = false});
+  const MiniBar({super.key, required this.height, this.isHighlighted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class MiniBar extends StatelessWidget {
       width: 18,
       height: height,
       decoration: BoxDecoration(
-        color: isHighlighted ? const Color(0xFF00D2FF) : const Color(0xFF00D2FF).withOpacity(0.4),
+        color: isHighlighted ? const Color(0xFF00D2FF) : const Color(0xFF00D2FF).withValues(alpha: 0.4),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
       ),
     );

@@ -18,7 +18,7 @@ class BuildBackground extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppMyColor.blueColor.withOpacity(0.15),
+                  AppMyColor.blueColor.withValues(alpha: 0.15),
                   Colors.transparent
                 ],
               ),
@@ -35,7 +35,7 @@ class BuildBackground extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppMyColor.lightLavenderPinkColor.withOpacity(0.10),
+                  AppMyColor.lightLavenderPinkColor.withValues(alpha: 0.10),
                   Colors.transparent
                 ],
               ),

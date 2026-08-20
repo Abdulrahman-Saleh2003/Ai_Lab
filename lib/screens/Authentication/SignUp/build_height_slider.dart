@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class HeightSlider extends StatelessWidget {
@@ -20,9 +21,9 @@ class HeightSlider extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Height',
-              style: TextStyle(
+            Text(
+              'height'.tr(),
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -44,12 +45,12 @@ class HeightSlider extends StatelessWidget {
             activeTrackColor: const Color(0xFF00D2FF),
             inactiveTrackColor: Colors.white12,
             thumbColor: const Color(0xFF00D2FF),
-            overlayColor: const Color(0xFF00D2FF).withOpacity(0.2),
+            overlayColor: const Color(0xFF00D2FF).withValues(alpha: 0.2),
           ),
           child: Slider(
             value: height,
-            min: 150,  // 1.50 m
-            max: 225,  // 2.25 m
+            min: 150,
+            max: 225,
             divisions: 75,
             label: '$meters m',
             onChanged: onChanged,

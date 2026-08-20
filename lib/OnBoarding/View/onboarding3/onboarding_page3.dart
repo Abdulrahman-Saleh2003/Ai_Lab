@@ -7,8 +7,7 @@ class OnboardingPage3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(

@@ -1,3 +1,4 @@
+import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:flutter/material.dart';
 
 class BuildAlertItem extends StatelessWidget {
@@ -12,8 +13,7 @@ class BuildAlertItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return Container(
       padding: EdgeInsets.all(14 * scale),
@@ -30,9 +30,7 @@ class BuildAlertItem extends StatelessWidget {
             color: isCritical ? Colors.red : Colors.green,
             size: 20 * scale,
           ),
-
           SizedBox(width: 12 * scale),
-
           Expanded(
             child: Text(
               text,

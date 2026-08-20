@@ -14,8 +14,6 @@ import 'package:ai_lab/core/constant/app_link_api.dart';
 
 
 
-import 'package:ai_lab/core/class/crud.dart';
-import 'package:ai_lab/core/constant/app_link_api.dart';
 
 class SignUpData {
   final Crud crud;

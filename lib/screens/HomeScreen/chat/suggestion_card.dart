@@ -18,7 +18,7 @@ class SuggestionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF333538),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF3C494E).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFF3C494E).withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

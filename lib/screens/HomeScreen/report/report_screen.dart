@@ -1,30 +1,22 @@
-
 import 'package:ai_lab/models/home/lab_report_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-class CBCReportScreen extends StatefulWidget {
-  final LabAnalysisResult? reportData; // نتيجة التحليل القادمة من الـ API (state.analysisResult)
+class CBCReportScreen extends StatelessWidget {
+  final LabAnalysisResult? reportData;
 
   const CBCReportScreen({super.key, this.reportData});
 
-  @override
-  State<CBCReportScreen> createState() => _CBCReportScreenState();
-}
+  List<LabTest> get _tests => reportData?.tests ?? [];
 
-class _CBCReportScreenState extends State<CBCReportScreen> {
-  // ─── كل الفحوصات جاهزة مباشرة من الموديل، ما في تفكيك يدوي ───
-  List<LabTest> get _tests => widget.reportData?.tests ?? [];
-
-  // ─── يحدد اللون حسب حالة الفحص ───
   Color _statusColor(String status) {
     final s = status.toLowerCase();
-    if (s.contains('critical')) return const Color(0xFFEF4444); // أحمر
+    if (s.contains('critical')) return const Color(0xFFEF4444);
     if (s.contains('high') || s.contains('low')) {
-      return const Color(0xFFF59E0B); // برتقالي
+      return const Color(0xFFF59E0B);
     }
-    if (s.contains('normal')) return const Color(0xFF10B981); // أخضر
-    return const Color(0xFF00D2FF); // افتراضي
+    if (s.contains('normal')) return const Color(0xFF10B981);
+    return const Color(0xFF00D2FF);
   }
 
   @override
@@ -41,11 +33,12 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Complete Blood Count',
-          style: GoogleFonts.spaceGrotesk(
+          'comprehensive_blood_panel'.tr(),
+          style: const TextStyle(
+            fontFamily: 'SpaceGrotesk',
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF00D2FF),
+            color: Color(0xFF00D2FF),
             letterSpacing: -0.5,
           ),
         ),
@@ -68,18 +61,20 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'AI VISION ENGINE',
-                      style: GoogleFonts.manrope(
+                      'system_diagnostic_ai'.tr().toUpperCase(),
+                      style: const TextStyle(
+                        fontFamily: 'SpaceGrotesk',
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 2,
-                        color: const Color(0xFFBBC9CF),
+                        color: Color(0xFFBBC9CF),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      'Diagnos AI',
-                      style: GoogleFonts.spaceGrotesk(
+                    const Text(
+                      'LabSync AI',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -91,21 +86,23 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'TESTS FOUND',
-                      style: GoogleFonts.manrope(
+                      'tests_found'.tr().toUpperCase(),
+                      style: const TextStyle(
+                        fontFamily: 'SpaceGrotesk',
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 2,
-                        color: const Color(0xFFBBC9CF),
+                        color: Color(0xFFBBC9CF),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${tests.length}',
-                      style: GoogleFonts.spaceGrotesk(
+                      style: const TextStyle(
+                        fontFamily: 'SpaceGrotesk',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF00D2FF),
+                        color: Color(0xFF00D2FF),
                       ),
                     ),
                   ],
@@ -126,12 +123,12 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
                   border: Border.all(color: const Color(0xFF333538)),
                 ),
                 child: Text(
-                  "لا توجد نتائج لعرضها",
-                  style: GoogleFonts.manrope(color: const Color(0xFFBBC9CF)),
+                  "no_extracted_tests".tr(),
+                  style: const TextStyle(fontFamily: 'Cairo', color: Color(0xFFBBC9CF)),
                 ),
               )
             else
-            // ─── بطاقة لكل فحص، مبنية مباشرة من كائنات LabTest ───
+              // ─── بطاقة لكل فحص، مبنية مباشرة من كائنات LabTest ───
               ...tests.map((test) {
                 return _buildResultCard(
                   title: test.displayTitle,
@@ -169,9 +166,8 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(999),
                   onTap: () {
-                    // TODO: Generate AI Analysis (ملخص نصي شامل عن الحالة)
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('AI Analysis coming soon...')),
+                      SnackBar(content: Text('start_ocr_analysis'.tr())),
                     );
                   },
                   child: Row(
@@ -180,22 +176,20 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
                       const Icon(Icons.psychology, color: Colors.white, size: 28),
                       const SizedBox(width: 12),
                       Text(
-                        'Generate AI Analysis',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 18,
+                        'generate_ai_analysis'.tr(),
+                        style: const TextStyle(
+                          fontFamily: 'SpaceGrotesk',
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
+                          letterSpacing: 1.5,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.auto_awesome, color: Color(0xFFEDB1FF)),
                     ],
                   ),
                 ),
               ),
             ),
-
-            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -212,98 +206,79 @@ class _CBCReportScreenState extends State<CBCReportScreen> {
     required Color statusColor,
     required String statusText,
   }) {
-    final isCritical = statusText.toLowerCase().contains("critical") ||
-        statusText.contains("حرج") ||
-        statusText.contains("خطر");
-
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1C1F),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF333538)),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF3C494E)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: GoogleFonts.spaceGrotesk(
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                    Text(subtitle,
-                        style: GoogleFonts.manrope(
-                            fontSize: 13.5, color: const Color(0xFFBBC9CF))),
-                  ],
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                          width: 11,
-                          height: 11,
-                          decoration: BoxDecoration(
-                              color: statusColor, shape: BoxShape.circle)),
-                      const SizedBox(width: 8),
-                      Text(
-                        value,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: statusColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text("$ref $unit",
-                      style: GoogleFonts.manrope(
-                          fontSize: 12, color: const Color(0xFF859399))),
-                ],
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: statusColor,
+                ),
               ),
             ],
           ),
-
-          const SizedBox(height: 18),
-
-          // Progress Bar
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 12,
+              color: Color(0xFFBBC9CF),
+            ),
+          ),
+          const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: const Color(0xFF333538),
               valueColor: AlwaysStoppedAnimation<Color>(statusColor),
-              minHeight: 7,
+              minHeight: 6,
             ),
           ),
-
-          const SizedBox(height: 10),
-
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                statusText,
-                style: GoogleFonts.manrope(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: statusColor,
+                'Ref: $ref $unit',
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 11,
+                  color: Color(0xFFBBC9CF),
                 ),
               ),
               Text(
-                isCritical ? "Immediate Review Required" : "Measured Value",
-                style:
-                GoogleFonts.manrope(fontSize: 12, color: const Color(0xFF859399)),
+                statusText,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: statusColor,
+                ),
               ),
             ],
           ),

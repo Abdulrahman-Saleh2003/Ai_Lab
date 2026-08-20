@@ -6,8 +6,7 @@ class BuildFeaturesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return Column(
       children: [
@@ -27,7 +26,7 @@ class BuildFeaturesSection extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(14 * scale),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00D2FF).withOpacity(0.1),
+                      color: const Color(0xFF00D2FF).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12 * scale),
                     ),
                     child: Icon(
@@ -122,7 +121,7 @@ class BuildFeaturesSection extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(12 * scale),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEDB1FF).withOpacity(0.1),
+                  color: const Color(0xFFEDB1FF).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12 * scale),
                 ),
                 child: Icon(

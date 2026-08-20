@@ -1,14 +1,9 @@
 
 
 import 'package:flutter/material.dart';
-class BloodCountReportPage extends StatefulWidget {
+
+class BloodCountReportPage extends StatelessWidget {
   const BloodCountReportPage({super.key});
-
-  @override
-  State<BloodCountReportPage> createState() => _BloodCountReportPageState();
-}
-
-class _BloodCountReportPageState extends State<BloodCountReportPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -167,24 +162,4 @@ class _BloodCountReportPageState extends State<BloodCountReportPage> {
       ),
     );
   }
-
-  Widget _buildFooter() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircleAvatar(radius: 16, backgroundColor: Colors.grey, child: Icon(Icons.person, size: 20)),
-            const SizedBox(width: 8),
-            const Text("Dr. Ahmed Hassan", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-            const SizedBox(width: 4),
-            const Icon(Icons.verified, color: Color(0xFF00D2FF), size: 16),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Text("VERIFIED MEDICAL REPORT • 2023", style: TextStyle(fontSize: 10, color: Colors.grey, letterSpacing: 1.2)),
-      ],
-    );
-  }
-
 }

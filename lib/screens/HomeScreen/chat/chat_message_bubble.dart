@@ -27,7 +27,7 @@ class ChatMessageBubble extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isAi
-                        ? const Color(0xFF333538).withOpacity(0.4)
+                        ? const Color(0xFF333538).withValues(alpha: 0.4)
                         : const Color(0xFF282A2D),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
@@ -37,13 +37,13 @@ class ChatMessageBubble extends StatelessWidget {
                     ),
                     border: Border.all(
                       color: isAi
-                          ? const Color(0xFF859399).withOpacity(0.15)
+                          ? const Color(0xFF859399).withValues(alpha: 0.15)
                           : const Color(0xFF333538),
                     ),
                     boxShadow: isAi
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF00D2FF).withOpacity(0.05),
+                              color: const Color(0xFF00D2FF).withValues(alpha: 0.05),
                               blurRadius: 20,
                               offset: const Offset(0, 4),
                             )
@@ -85,7 +85,7 @@ class ChatMessageBubble extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00D2FF).withOpacity(0.2),
+            color: const Color(0xFF00D2FF).withValues(alpha: 0.2),
             blurRadius: 10,
           ),
         ],
@@ -110,7 +110,7 @@ class ChatMessageBubble extends StatelessWidget {
         child: Image.network(
           'https://lh3.googleusercontent.com/aida-public/AB6AXuBSria-Eb2HGNqvsWQuH0_F1E7k5eAq8CQrDuh4ntNFK-or7duUmFcqg7vNlHkQyTZ1FEqRc5qjSSutNvYqYceX2R4uJRf11ulGumcxCdFxo_LGxiiUrTfyCX0-9P_MjX3Rz_5eL_r7KQ5qHxE54FbjWhlOWZc55EbGXcKz1nPIOcwOxvnfovFN0JcKsbeEMPODpnWbDcwgl82KmB5djQ87uw_f5AevVa2GayeQPsiWKfOO47k-wXacGA',
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 18, color: Colors.white70),
+          errorBuilder: (_, _, _) => const Icon(Icons.person, size: 18, color: Colors.white70),
         ),
       ),
     );

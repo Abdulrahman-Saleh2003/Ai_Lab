@@ -50,9 +50,7 @@ class BuildMetricChart extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: heights.asMap().entries.map((entry) {
-              final index = entry.key;
-              final height = entry.value;
+            children: heights.map((height) {
               final isMax = height == heights.reduce((a, b) => a > b ? a : b);
 
               return Container(

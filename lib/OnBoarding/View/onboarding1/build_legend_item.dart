@@ -1,31 +1,4 @@
-// import 'package:flutter/material.dart';
-//
-// class BuildLegendItem extends StatelessWidget {
-//   const BuildLegendItem({super.key, required this.color, required this.label});
-//
-//   final Color color;
-//   final String label;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       children: [
-//         Container(
-//           width: 12,
-//           height: 12,
-//           decoration: BoxDecoration(
-//             color: color,
-//             borderRadius: BorderRadius.circular(3),
-//           ),
-//         ),
-//         const SizedBox(width: 8),
-//         Text(
-//           label,
-//           style: const TextStyle(fontSize: 13, color: Colors.grey),
-//         ),
-//       ],
-//     );
-//   }
-// }
+import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:flutter/material.dart';
 
 class BuildLegendItem extends StatelessWidget {
@@ -40,9 +13,7 @@ class BuildLegendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     return Row(
       children: [
@@ -54,9 +25,7 @@ class BuildLegendItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(3 * scale),
           ),
         ),
-
         SizedBox(width: 4 * scale),
-
         Text(
           label,
           style: TextStyle(

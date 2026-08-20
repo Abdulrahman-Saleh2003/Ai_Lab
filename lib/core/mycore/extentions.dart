@@ -15,7 +15,6 @@ extension CustomWidget on Widget {
     );
   }
 
-
   Widget expanded({int? flex, required Image child}) {
     return Expanded(
       flex: flex ?? 0,
@@ -89,12 +88,11 @@ extension CustomWidget on Widget {
     );
   }
 
-
-Widget fadeInLeft({secondsDuration = 2, secondsDelay = 1}) {
-  return FadeInLeft(
-    duration:  Duration(seconds: secondsDuration),
-    delay:  Duration(seconds: secondsDelay),
-
-    child: this,
-  );
-}}
+  Widget fadeInLeft({int secondsDuration = 2, int secondsDelay = 1}) {
+    return FadeInLeft(
+      duration: Duration(seconds: secondsDuration),
+      delay: Duration(seconds: secondsDelay),
+      child: this,
+    );
+  }
+}

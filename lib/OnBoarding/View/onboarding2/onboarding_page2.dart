@@ -82,11 +82,7 @@ class OnboardingPage2 extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // _buildClinicalStreams(),
-          BuildClinicalStreams(),
-
-          // const SizedBox(height: 10),
-
+          const BuildClinicalStreams(),
           const SizedBox(height: 40),
 
           const OnboardingNextButton(),

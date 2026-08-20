@@ -1,4 +1,5 @@
 import 'package:ai_lab/OnBoarding/View/widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -15,17 +16,17 @@ class OnboardingAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       automaticallyImplyLeading: false,
       titleSpacing: 0,
-      title: Padding(
-        padding: const EdgeInsets.only(left: 16),
+      title: const Padding(
+        padding: EdgeInsets.only(left: 16),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.science,
               color: Color(0xFF00D2FF),
               size: 28,
             ),
-            const SizedBox(width: 10),
-            const Text(
+            SizedBox(width: 10),
+            Text(
               'LAB_SYS v1.0',
               maxLines: 1,
               style: TextStyle(
@@ -34,8 +35,7 @@ class OnboardingAppBar extends StatelessWidget implements PreferredSizeWidget {
                 letterSpacing: 2,
                 color: Color(0xFF00D2FF),
                 fontSize: 16,
-                overflow: TextOverflow.ellipsis
-                  ,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -52,13 +52,13 @@ class OnboardingAppBar extends StatelessWidget implements PreferredSizeWidget {
                 color: const Color(0xFF00D2FF),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha:0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   width: 1.5,
                 ),
               ),
-              child: const Text(
-                'SKIP',
-                style: TextStyle(
+              child: Text(
+                'skip'.tr().toUpperCase(),
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 2,

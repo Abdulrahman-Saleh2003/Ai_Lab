@@ -1,12 +1,6 @@
 import 'package:ai_lab/core/constant/app_color.dart';
 import 'package:flutter/material.dart';
 
-
-
-
-
-
-
 class BuildQueueItem extends StatelessWidget {
   const BuildQueueItem({
     super.key,
@@ -33,7 +27,7 @@ class BuildQueueItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,   // ← هذا هو المفتاح
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Icon
           Container(
@@ -56,6 +50,7 @@ class BuildQueueItem extends StatelessWidget {
           // Text Content
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Vial ID: $vialId',
@@ -72,7 +67,7 @@ class BuildQueueItem extends StatelessWidget {
                   test,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 10.5 : 10,
-                    color:  AppMyColor.whiteApp,
+                    color: AppMyColor.whiteApp,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -92,8 +87,8 @@ class BuildQueueItem extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isActive
-                    ? const Color(0xFF00D2FF).withValues(alpha:0.2)
-                    : Colors.grey.withValues(alpha:0.2),
+                    ? const Color(0xFF00D2FF).withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -101,7 +96,7 @@ class BuildQueueItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: isSmallScreen ? 9.5 : 10,
                   fontWeight: FontWeight.bold,
-                  color: isActive ? AppMyColor.blueColor :  AppMyColor.whiteApp,
+                  color: isActive ? AppMyColor.blueColor : AppMyColor.whiteApp,
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -113,93 +108,3 @@ class BuildQueueItem extends StatelessWidget {
     );
   }
 }
-// class BuildQueueItem extends StatelessWidget {
-//   const BuildQueueItem({super.key, required this.vialId, required this.test, required this.status, required this.isActive});
-//
-//  final  String vialId;
-//   final    String test;
-//   final   String status;
-//   final   bool isActive;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(14),
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF282A2D),
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Row(
-//         children: [
-//           // Icon
-//           Container(
-//             width: 48,
-//             height: 48,
-//             decoration: BoxDecoration(
-//               color: isActive
-//                   ? const Color(0xFF00D2FF).withValues(alpha: 0.1)
-//                   : Colors.grey.withValues(alpha: 0.1),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             child: Icon(
-//               Icons.inventory_2,
-//               color: isActive ? AppMyColor.blueColor : AppMyColor.whiteApp,
-//             ),
-//           ),
-//           const SizedBox(width: 12),
-//
-//           // Text Content - Expanded
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   'Vial ID: $vialId',
-//                   style:  TextStyle(
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: 14,
-//                     color: isActive ?  AppMyColor.blueColor  :AppMyColor.whiteApp,
-//                   ),
-//                   overflow: TextOverflow.ellipsis,
-//                 ),
-//                 const SizedBox(height: 2),
-//                 Text(
-//                   test,
-//                   style: TextStyle(
-//                     fontSize: 12,
-//                     color: Colors.white70,
-//                   ),
-//                   overflow: TextOverflow.ellipsis,
-//                   maxLines: 1,
-//                 ),
-//               ],
-//             ),
-//           ),
-//
-//           const SizedBox(width: 8),
-//
-//           Flexible(
-//             child: Container(
-//               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-//               decoration: BoxDecoration(
-//                 color: isActive
-//                     ? const Color(0xFF00D2FF).withValues(alpha:0.2)
-//                     : Colors.grey.withValues(alpha:0.2),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Text(
-//                 status.toUpperCase(),
-//                 style: TextStyle(
-//                   fontSize: 10,
-//                   fontWeight: FontWeight.bold,
-//                   color: isActive ? AppMyColor.blueColor  : Colors.grey,
-//                 ),
-//                 overflow: TextOverflow.ellipsis,
-//                 maxLines: 1,
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

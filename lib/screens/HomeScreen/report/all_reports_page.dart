@@ -2,21 +2,14 @@
 import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/controller/home/home_state.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
-import 'package:ai_lab/screens/HomeScreen/report/report_chat_screen.dart';
+import 'package:ai_lab/screens/HomeScreen/Ocr/report_details_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:ai_lab/screens/HomeScreen/Ocr/report_details_screen.dart'; // ✅ عدّل المسار حسب مكان الملف عندك
-
-
-class AllReportsPage extends ConsumerStatefulWidget {
+class AllReportsPage extends ConsumerWidget {
   const AllReportsPage({super.key});
 
-  @override
-  ConsumerState<AllReportsPage> createState() => _AllReportsPageState();
-}
-
-class _AllReportsPageState extends ConsumerState<AllReportsPage> {
   static const _bg = Color(0xFF111317);
   static const _surfaceHigh = Color(0xFF282A2D);
   static const _onSurface = Color(0xFFE2E2E6);
@@ -28,14 +21,6 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
   static const _onPrimary = Color(0xFF003543);
   static const _warning = Color(0xFFF59E0B);
   static const _grey = Color(0xFF7A8A90);
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(homeProvider.notifier).fetchAllReports();
-    });
-  }
 
   Color _statusColor(ReportStatus s) {
     switch (s) {
@@ -57,19 +42,19 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
   String _statusLabel(ReportStatus s) {
     switch (s) {
       case ReportStatus.completed:
-        return 'Completed';
+        return 'status_completed'.tr();
       case ReportStatus.reviewed:
-        return 'Reviewed';
+        return 'status_reviewed'.tr();
       case ReportStatus.processing:
-        return 'Processing';
+        return 'status_processing'.tr();
       case ReportStatus.pending:
-        return 'Pending';
+        return 'status_pending'.tr();
       case ReportStatus.rejected:
-        return 'Rejected';
+        return 'status_rejected'.tr();
       case ReportStatus.archived:
-        return 'Archived';
+        return 'status_archived'.tr();
       case ReportStatus.unknown:
-        return 'Unknown';
+        return 'status_unknown'.tr();
     }
   }
 
@@ -119,14 +104,14 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(homeProvider);
 
     return Scaffold(
       backgroundColor: _bg,
       extendBody: true,
       appBar: _buildAppBar(state),
-      body: _buildBody(state),
+      body: _buildBody(context, ref, state),
     );
   }
 
@@ -140,21 +125,26 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.science, color: _primary, size: 22),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'ALL REPORTS',
-                    style: TextStyle(
-                      fontFamily: 'SpaceGrotesk',
-                      color: _primary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 3,
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(Icons.science, color: _primary, size: 22),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'all_reports'.tr(),
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'SpaceGrotesk',
+                          color: _primary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 3,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Row(
                 children: [
@@ -190,7 +180,7 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
     );
   }
 
-  Widget _buildBody(HomeState state) {
+  Widget _buildBody(BuildContext context, WidgetRef ref, HomeState state) {
     if (state.reportsStatus == ReportsListStatus.loading &&
         state.reports.isEmpty) {
       return const Center(
@@ -209,7 +199,7 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
               const Icon(Icons.wifi_off_rounded, color: _error, size: 48),
               const SizedBox(height: 16),
               Text(
-                state.reportsErrorMessage ?? 'تعذر تحميل التقارير',
+                state.reportsErrorMessage ?? 'failed_to_load_reports'.tr(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: _onSurfaceVar, fontSize: 14),
               ),
@@ -218,8 +208,8 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
                 onPressed: () =>
                     ref.read(homeProvider.notifier).fetchAllReports(forceRefresh: true),
                 icon: const Icon(Icons.refresh, color: _onPrimary),
-                label: const Text('حاول مرة أخرى',
-                    style: TextStyle(color: _onPrimary)),
+                label: Text('try_again'.tr(),
+                    style: const TextStyle(color: _onPrimary)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _primary,
                   shape: RoundedRectangleBorder(
@@ -244,10 +234,10 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
             const Icon(Icons.folder_off_outlined,
                 color: _onSurfaceVar, size: 48),
             const SizedBox(height: 16),
-            const Text(
-              'لا توجد تقارير بعد',
+            Text(
+              'no_reports_found'.tr(),
               textAlign: TextAlign.center,
-              style: TextStyle(color: _onSurfaceVar, fontSize: 15),
+              style: const TextStyle(color: _onSurfaceVar, fontSize: 15),
             ),
           ],
         ),
@@ -262,8 +252,8 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 160),
         children: [
           Text(
-            'Live Analysis Feed',
-            style: TextStyle(
+            'live_analysis_feed'.tr(),
+            style: const TextStyle(
               color: _onSurfaceVar,
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -283,14 +273,13 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
                     text: 'Laboratory\n',
                     style: TextStyle(color: _onSurface)),
                 TextSpan(
-                    text: '${state.reports.length} Reports',
+                    text: '${state.reports.length} ${'reports_count'.tr()}',
                     style: const TextStyle(color: _primary)),
               ],
             ),
           ),
           const SizedBox(height: 24),
 
-          // ✅ كل بطاقة الآن ConsumerWidget مستقل، وفيه key ثابت مشان توسيعها/طيّها ما ينضرب بالـ rebuild
           ...state.reports.map((report) {
             return Padding(
               key: ValueKey(report.reportId),
@@ -307,7 +296,7 @@ class _AllReportsPageState extends ConsumerState<AllReportsPage> {
 
           const SizedBox(height: 16),
           Text(
-            'END OF SYNCHRONIZED RECORDS',
+            'end_of_synchronized_records'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: _onSurfaceVar.withValues(alpha: 0.5),
@@ -338,7 +327,6 @@ class _ReportCard extends ConsumerWidget {
 
   static const _error = Color(0xFFFFB4AB);
   static const _primary = Color(0xFF00D2FF);
-  static const _outlineVar = Color(0xFF3C494E);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -373,7 +361,7 @@ class _ReportCard extends ConsumerWidget {
                     width: 44,
                     height: 44,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _iconBox(),
+                    errorBuilder: (_, _, _) => _iconBox(),
                     loadingBuilder: (context, child, progress) {
                       if (progress == null) return child;
                       return _iconBox();
@@ -539,40 +527,7 @@ class _ReportCard extends ConsumerWidget {
       );
     }
 
-    // #########################
 
-    // عم يحلل حالياً (تنزيل/رفع/انتظار) — بدون تغيير
-    // if (analysisState.isBusy) {
-    //   final label = switch (analysisState.status) {
-    //     ReportAnalysisStatus.downloading => "جاري تحميل الصورة...",
-    //     ReportAnalysisStatus.uploading => "جاري الرفع...",
-    //     ReportAnalysisStatus.analyzing => "جاري التحليل بالذكاء الاصطناعي...",
-    //     _ => "جاري المعالجة...",
-    //   };
-    //   return SizedBox(
-    //     width: double.infinity,
-    //     child: ElevatedButton.icon(
-    //       onPressed: null,
-    //       icon: const SizedBox(
-    //         width: 16,
-    //         height: 16,
-    //         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
-    //       ),
-    //       label: Text(
-    //         label,
-    //         style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-    //       ),
-    //       style: ElevatedButton.styleFrom(
-    //         backgroundColor: _primary.withValues(alpha: 0.6),
-    //         disabledBackgroundColor: _primary.withValues(alpha: 0.6),
-    //         padding: const EdgeInsets.symmetric(vertical: 12),
-    //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    // #########################
     if (analysisState.isBusy) {
       final label = switch (analysisState.status) {
         ReportAnalysisStatus.starting => "جاري بدء التحليل...",

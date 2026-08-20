@@ -15,7 +15,7 @@ class LoginData {
 
 
 
-  postData({
+  Future<dynamic> postData({
     // required String email,
     required String email,
     required String password,

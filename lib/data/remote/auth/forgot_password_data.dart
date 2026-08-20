@@ -9,7 +9,7 @@ class ForgotPasswordData {
     required this.crud,
   });
 
-  postData({
+  Future<dynamic> postData({
 
     required   Map<String, dynamic>postData,
     required String linkUrl

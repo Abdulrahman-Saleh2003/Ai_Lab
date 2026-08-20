@@ -1,0 +1,141 @@
+import 'package:get_storage/get_storage.dart';
+
+class CacheHelper {
+  static final GetStorage _box = GetStorage();
+
+  static Future<void> init() async {
+    await GetStorage.init();
+  }
+
+  static Future<void> putString({
+    required String key,
+    required String value,
+  }) async {
+    await _box.write(key, value);
+  }
+
+  static String? getString({
+    required String key,
+  }) {
+    return _box.read<String>(key);
+  }
+
+  static Future<void> putBool({
+    required String key,
+    required bool value,
+  }) async {
+    await _box.write(key, value);
+  }
+
+  static bool? getBool({
+    required String key,
+  }) {
+    return _box.read<bool>(key);
+  }
+
+  static Future<void> removeData({
+    required String key,
+  }) async {
+    await _box.remove(key);
+  }
+
+  static Future<void> clearAll() async {
+    await _box.erase();
+  }
+
+  // ─── دوال المستخدم المباشرة ───
+  static Future<void> saveRememberPreference({
+    required String rememberMe,
+  }) async {
+    await _box.write('rememberMe', rememberMe);
+  }
+
+  static String? getRemember() {
+    return _box.read<String>('rememberMe');
+  }
+
+  static Future<void> putUser({
+    required String userToken,
+  }) async {
+    await _box.write('token', userToken);
+  }
+
+  static Future<void> putUserFCMToken({
+    required String userToken,
+  }) async {
+    await _box.write('fCMToken', userToken);
+  }
+
+  static Future<void> putUserEmail({
+    required String email,
+  }) async {
+    await _box.write('email', email);
+  }
+
+  static Future<void> putUserLanguage({
+    required String language,
+  }) async {
+    await _box.write('Language', language);
+  }
+
+  static Future<void> putUserImage({
+    required String image,
+  }) async {
+    await _box.write('Image', image);
+  }
+
+  static Future<void> putUserId({
+    required String id,
+  }) async {
+    await _box.write('id', id);
+  }
+
+  static Future<void> putUserName({
+    required String name,
+  }) async {
+    await _box.write('name', name);
+  }
+
+  static Future<void> putUserAge({
+    required String age,
+  }) async {
+    await _box.write('age', age);
+  }
+
+  static Future<void> putUserGender({
+    required String gender,
+  }) async {
+    await _box.write('gender', gender);
+  }
+
+  static Future<void> putUserPhone({
+    required String phone,
+  }) async {
+    await _box.write('phone', phone);
+  }
+
+  static String? getUserToken() => _box.read<String>('token');
+  static String? getUserFCMToken() => _box.read<String>('fCMToken');
+  static String? getUserEmail() => _box.read<String>('email');
+  static String? getUserImage() => _box.read<String>('Image');
+  static String? getUserId() => _box.read<String>('id');
+  static String? getUserName() => _box.read<String>('name');
+  static String? getUserAge() => _box.read<String>('age');
+  static String? getUserGender() => _box.read<String>('gender');
+  static String? getUserPhone() => _box.read<String>('phone');
+  static String? getUserLanguage() => _box.read<String>('Language');
+
+  static Future<void> logoutUser() async {
+    await _box.remove('token');
+    await _box.remove('email');
+    await _box.remove('id');
+    await _box.remove('name');
+    await _box.remove('age');
+    await _box.remove('gender');
+    await _box.remove('phone');
+    await _box.remove('Image');
+  }
+}
+
+// Alias for backward compatibility
+typedef CashHelper = CacheHelper;

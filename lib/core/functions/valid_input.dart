@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-validInput1(String val, int min, int max, String type) {
+String? validInput1(String val, int min, int max, String type) {
   if (type == "userName") {
     if (!GetUtils.isUsername(val)) {
       return "Not valid User name";
@@ -39,9 +39,10 @@ validInput1(String val, int min, int max, String type) {
   if (val.length < min) {
     return "can't be less than $min";
   }
+  return null;
 }
 
-validInput(String value, int min, int max, String type) {
+String? validInput(String value, int min, int max, String type) {
   if (value.isEmpty) {
     return 'This field is empty'.tr;
   }
@@ -73,4 +74,5 @@ validInput(String value, int min, int max, String type) {
     case '':
       return GetUtils.isTxt("") ? null : "";
   }
+  return null;
 }

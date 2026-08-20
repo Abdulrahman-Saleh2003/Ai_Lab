@@ -84,7 +84,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
        GoRoute(
         path: '/ChatScreen',
-        builder: (context, state) => const ChatScreen(),
+        builder: (context, state) => ChatScreen(),
       ),
     ],
   );

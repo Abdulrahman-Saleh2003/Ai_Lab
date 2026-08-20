@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ai_lab/controller/OnBoarding/onboarding_provider.dart';
@@ -24,7 +25,7 @@ class OnboardingNextButton extends ConsumerWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00D2FF).withOpacity(0.5),
+                color: const Color(0xFF00D2FF).withValues(alpha: 0.5),
                 blurRadius: 15,
                 offset: const Offset(0, 6),
               ),
@@ -34,7 +35,9 @@ class OnboardingNextButton extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                state.currentPage == 3 ? 'GET STARTED' : 'NEXT',
+                state.currentPage == 3
+                    ? 'get_started'.tr().toUpperCase()
+                    : 'next'.tr().toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -52,7 +55,3 @@ class OnboardingNextButton extends ConsumerWidget {
     );
   }
 }
-
-
-
-

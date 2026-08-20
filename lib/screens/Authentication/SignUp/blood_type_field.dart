@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class BloodTypeField extends StatelessWidget {
@@ -26,9 +27,9 @@ class BloodTypeField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Blood Type',
-          style: TextStyle(
+        Text(
+          'blood_type'.tr(),
+          style: const TextStyle(
             color: Colors.white70,
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -40,7 +41,7 @@ class BloodTypeField extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF25272C),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -52,10 +53,10 @@ class BloodTypeField extends StatelessWidget {
               items: bloodTypes
                   .map(
                     (type) => DropdownMenuItem(
-                  value: type,
-                  child: Text(type),
-                ),
-              )
+                      value: type,
+                      child: Text(type),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) onChanged(value);

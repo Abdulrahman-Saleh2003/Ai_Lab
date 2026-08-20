@@ -1,3 +1,4 @@
+import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:flutter/material.dart';
 
 class ResultItemWidget extends StatelessWidget {
@@ -6,7 +7,7 @@ class ResultItemWidget extends StatelessWidget {
   final String subtitle;
   final String status;
   final Color statusColor;
-  final VoidCallback? onTap;   // ← هذا المتغير الجديد للضغط
+  final VoidCallback? onTap;
 
   const ResultItemWidget({
     super.key,
@@ -20,8 +21,7 @@ class ResultItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375; // تصميم أساسي 375px
+    final scale = AppSize.scale(context);
 
     final double iconSize = 48 * scale.clamp(0.85, 1.15);
     final double fontSizeTitle = 13 * scale.clamp(0.9, 1.1);
@@ -36,7 +36,7 @@ class ResultItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF1A1C1F),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha:0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
@@ -50,7 +50,6 @@ class ResultItemWidget extends StatelessWidget {
               ),
               child: Icon(icon, color: statusColor, size: iconSize * 0.55),
             ),
-
             const SizedBox(width: 12),
 
             // Title & Subtitle
@@ -60,6 +59,8 @@ class ResultItemWidget extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -69,6 +70,8 @@ class ResultItemWidget extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: fontSizeSubtitle,
                       color: Colors.grey,
@@ -78,6 +81,8 @@ class ResultItemWidget extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(width: 8),
+
             // Status + Arrow
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -85,7 +90,7 @@ class ResultItemWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha:0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(

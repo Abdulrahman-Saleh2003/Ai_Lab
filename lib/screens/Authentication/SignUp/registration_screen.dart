@@ -1,273 +1,15 @@
-// import 'package:ai_lab/OnBoarding/View/widget.dart';
-// import 'package:ai_lab/controller/Authentication/sign_up/sign_up_provider.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/build_header.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/build_weight_slider.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/custom_input_field.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/gender_selection_field.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/initialize_button.dart';
-// import 'package:ai_lab/screens/Authentication/SignUp/sign_up_to_login_link.dart';
-// import 'package:flutter/material.dart';
-//
-// class PatientRegistrationScreen extends ConsumerWidget {
-//   const PatientRegistrationScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final size = MediaQuery.sizeOf(context);
-//
-//     final state = ref.watch(patientRegistrationProvider);
-//     final controller = ref.read(patientRegistrationProvider.notifier);
-//
-//     return Scaffold(
-//       backgroundColor: const Color(0xFF111317),
-//
-//       body: Stack(
-//         children: [
-//           // Background Glows
-//           Positioned(
-//             top: -150 * (size.width / 375),
-//             right: -100 * (size.width / 375),
-//             child: Container(
-//               width: 500 * (size.width / 375),
-//               height: 500 * (size.width / 375),
-//               decoration: BoxDecoration(
-//                 shape: BoxShape.circle,
-//                 gradient: RadialGradient(
-//                   colors: [
-//                     const Color(0xFF00D2FF).withOpacity(0.12),
-//                     Colors.transparent
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//
-//           Positioned(
-//             bottom: -150 * (size.width / 375),
-//             left: -100 * (size.width / 375),
-//             child: Container(
-//               width: 500 * (size.width / 375),
-//               height: 500 * (size.width / 375),
-//               decoration: BoxDecoration(
-//                 shape: BoxShape.circle,
-//                 gradient: RadialGradient(
-//                   colors: [
-//                     const Color(0xFFEDB1FF).withOpacity(0.10),
-//                     Colors.transparent
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//
-//           SafeArea(
-//             child: SingleChildScrollView(
-//               padding: EdgeInsets.fromLTRB(
-//                 20 * (size.width / 375),
-//                 20 * (size.width / 375),
-//                 20 * (size.width / 375),
-//                 40 * (size.width / 375),
-//               ),
-//
-//               child: Form(
-//                 key: controller.formKey,
-//
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     const RegistrationHeader(),
-//
-//                     SizedBox(height: 40 * (size.width / 375)),
-//
-//                     Text(
-//                       "INITIALIZE",
-//                       style: TextStyle(
-//                         fontFamily: 'SpaceGrotesk',
-//                         fontSize: 38 * (size.width / 375),
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.white,
-//                         letterSpacing: 1 * (size.width / 375),
-//                       ),
-//                     ),
-//
-//                     Text(
-//                       "NODE",
-//                       style: TextStyle(
-//                         fontFamily: 'SpaceGrotesk',
-//                         fontSize: 42 * (size.width / 375),
-//                         fontWeight: FontWeight.bold,
-//                         color: const Color(0xFF00D2FF),
-//                         letterSpacing: 2 * (size.width / 375),
-//                       ),
-//                     ),
-//
-//                     SizedBox(height: 8 * (size.width / 375)),
-//
-//                     Text(
-//                       "Synchronize your biological profile with our distributed clinical laboratory network.",
-//                       style: TextStyle(
-//                         fontSize: 15 * (size.width / 375),
-//                         color: Colors.grey,
-//                         height: 1.5,
-//                       ),
-//                     ),
-//
-//                     SizedBox(height: 40 * (size.width / 375)),
-//
-//                     // Form Card
-//                     Container(
-//                       padding: EdgeInsets.all(28 * (size.width / 375)),
-//                       decoration: BoxDecoration(
-//                         color: const Color(0xFF1A1C1F),
-//                         borderRadius: BorderRadius.circular(
-//                           24 * (size.width / 375),
-//                         ),
-//                         border: Border.all(
-//                           color: Colors.white.withOpacity(0.08),
-//                         ),
-//                         boxShadow: [
-//                           BoxShadow(
-//                             color: Colors.black.withOpacity(0.4),
-//                             blurRadius: 30 * (size.width / 375),
-//                             offset: Offset(
-//                               0,
-//                               10 * (size.width / 375),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//
-//                       child: Column(
-//                         children: [
-//                           CustomInputField(
-//                             label: "Patient Phone Number",
-//                             hint: "000-000-0000",
-//                             icon: Icons.phone,
-//                             inputType: InputType.phone,
-//                             controller: controller.phoneController,
-//                             selectedCountryCode: controller.countryCode,
-//                             onCountryChanged: controller.changeCountryCode,
-//                           ),
-//
-//                           SizedBox(height: 24 * (size.width / 375)),
-//
-//                           CustomInputField(
-//                             label: "Patient Email",
-//                             hint: "synapse@labsync.io",
-//                             icon: Icons.email_outlined,
-//                             inputType: InputType.email,
-//                             controller: controller.emailController,
-//                             validator: (value) =>
-//                             value?.isEmpty == true
-//                                 ? 'Email is required'
-//                                 : null,
-//                           ),
-//
-//                           SizedBox(height: 24 * (size.width / 375)),
-//
-//                           CustomInputField(
-//                             label: "National ID",
-//                             hint: "ID-XXXX-XXXX",
-//                             icon: Icons.badge_outlined,
-//                             inputType: InputType.nationalId,
-//                             controller: controller.nationalIdController,
-//                           ),
-//
-//                           SizedBox(height: 24 * (size.width / 375)),
-//
-//                           CustomInputField(
-//                             label: "Access Cipher",
-//                             hint: "••••••••••••",
-//                             icon: Icons.lock_outline,
-//                             inputType: InputType.password,
-//                             controller: controller.passwordController,
-//                             isPasswordVisible: controller.isPasswordVisible,
-//                             onTogglePassword:
-//                             controller.togglePasswordVisibility,
-//                             validator: (value) {
-//                               if (value == null || value.isEmpty) {
-//                                 return 'Password is required';
-//                               }
-//                               if (value.length < 6) {
-//                                 return 'Minimum 6 characters';
-//                               }
-//                               return null;
-//                             },
-//                           ),
-//
-//                           SizedBox(height: 24 * (size.width / 375)),
-//
-//                           GenderSelectionField(
-//                             selectedGender: state.selectedGender,
-//                             onChanged: controller.changeGender,
-//                           ),
-//
-//                           SizedBox(height: 32 * (size.width / 375)),
-//
-//                           WeightSlider(
-//                             weight: state.weight,
-//                             onChanged: controller.changeWeight,
-//                           ),
-//
-//                           SizedBox(height: 40 * (size.width / 375)),
-//
-//                           InitializeButton(
-//                             onPressed: () =>
-//                                 controller.goToHome(context),
-//                             isLoading: state.isLoading,
-//                           ),
-//
-//                           SizedBox(height: 20 * (size.width / 375)),
-//
-//                           LoginRedirectText(),
-//                         ],
-//                       ),
-//                     ),
-//
-//                     SizedBox(height: 40 * (size.width / 375)),
-//
-//                     Center(
-//                       child: RichText(
-//                         text: TextSpan(
-//                           style: TextStyle(
-//                             fontSize: 14 * (size.width / 375),
-//                             color: Colors.grey,
-//                           ),
-//                           children: const [
-//                             TextSpan(text: "Existing node detected? "),
-//                             TextSpan(
-//                               text: "Access Terminal",
-//                               style: TextStyle(
-//                                 color: Color(0xFFEDB1FF),
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:ai_lab/controller/Authentication/sign_up/sign_up_provider.dart';
 import 'package:ai_lab/controller/Authentication/sign_up/signup_state.dart';
-import 'package:ai_lab/screens/Authentication/SignUp/blood%E2%80%8E_type_field.dart';
-import 'package:ai_lab/screens/Authentication/SignUp/build%E2%80%8E_height_slider.dart';
+import 'package:ai_lab/core/constant/app_size.dart';
+import 'package:ai_lab/screens/Authentication/SignUp/blood_type_field.dart';
+import 'package:ai_lab/screens/Authentication/SignUp/build_height_slider.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/build_header.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/build_weight_slider.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/custom_input_field.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/gender_selection_field.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/initialize_button.dart';
 import 'package:ai_lab/screens/Authentication/SignUp/sign_up_to_login_link.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -277,8 +19,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.sizeOf(context);
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     final state = ref.watch(patientRegistrationProvider);
     final controller = ref.read(patientRegistrationProvider.notifier);
@@ -287,8 +28,8 @@ class PatientRegistrationScreen extends ConsumerWidget {
     ref.listen(patientRegistrationProvider, (prev, next) {
       if (next.status == RegisterStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إنشاء الحساب بنجاح، سجّل دخولك الآن'),
+          SnackBar(
+            content: Text('account_created_success'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -304,6 +45,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
         );
       }
     });
+
     return Scaffold(
       backgroundColor: const Color(0xFF111317),
       body: Stack(
@@ -319,7 +61,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF00D2FF).withOpacity(0.12),
+                    const Color(0xFF00D2FF).withValues(alpha: 0.12),
                     Colors.transparent,
                   ],
                 ),
@@ -336,7 +78,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFFEDB1FF).withOpacity(0.10),
+                    const Color(0xFFEDB1FF).withValues(alpha: 0.10),
                     Colors.transparent,
                   ],
                 ),
@@ -361,52 +103,29 @@ class PatientRegistrationScreen extends ConsumerWidget {
                     const RegistrationHeader(),
 
                     SizedBox(height: 40 * scale),
-                Text(
-                      "INITIALIZE",
-      style: TextStyle(
+                    Text(
+                      "initialize_node_title".tr(),
+                      style: TextStyle(
                         fontFamily: 'SpaceGrotesk',
-                        fontSize: 38 * scale,
+                        fontSize: 32 * scale,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1 * scale,
                       ),
                     ),
 
-                    Text(
-                      "NODE",
-                      style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        fontSize: 42 * scale,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF00D2FF),
-                        letterSpacing: 2 * scale,
-                      ),
-                    ),
-
                     SizedBox(height: 8 * scale),
 
                     Text(
-                      "Synchronize your biological profile with our distributed clinical laboratory network.",
+                      "sync_bio_profile_desc".tr(),
                       style: TextStyle(
-                        fontSize: 15 * scale,
+                        fontSize: 14 * scale,
                         color: Colors.grey,
                         height: 1.5,
                       ),
                     ),
 
-                Text(
-                  "INITIALIZE",
-
-                  style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        fontSize: 38 * (size.width / 375),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1 * (size.width / 375),
-                      ),
-                    ),
-
-                  SizedBox(height: 40 * scale),
+                    SizedBox(height: 40 * scale),
 
                     // Form Card
                     Container(
@@ -415,11 +134,11 @@ class PatientRegistrationScreen extends ConsumerWidget {
                         color: const Color(0xFF1A1C1F),
                         borderRadius: BorderRadius.circular(24 * scale),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.08),
+                          color: Colors.white.withValues(alpha: 0.08),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.4),
+                            color: Colors.black.withValues(alpha: 0.4),
                             blurRadius: 30 * scale,
                             offset: Offset(0, 10 * scale),
                           ),
@@ -429,14 +148,14 @@ class PatientRegistrationScreen extends ConsumerWidget {
                         children: [
                           // Name
                           CustomInputField(
-                            label: "Full Name",
+                            label: "full_name".tr(),
                             hint: "Yamen Almoghrabi",
                             icon: Icons.person_outline,
                             inputType: InputType.text,
                             controller: controller.nameController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Name is required';
+                                return 'name_required'.tr();
                               }
                               return null;
                             },
@@ -446,7 +165,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // Phone
                           CustomInputField(
-                            label: "Patient Phone Number",
+                            label: "patient_phone_number".tr(),
                             hint: "000-000-0000",
                             icon: Icons.phone,
                             inputType: InputType.phone,
@@ -455,7 +174,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
                             onCountryChanged: controller.changeCountryCode,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Phone is required';
+                                return 'phone_required'.tr();
                               }
                               return null;
                             },
@@ -465,17 +184,17 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // Email
                           CustomInputField(
-                            label: "Patient Email",
+                            label: "patient_email".tr(),
                             hint: "synapse@labsync.io",
                             icon: Icons.email_outlined,
                             inputType: InputType.email,
                             controller: controller.emailController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Email is required';
+                                return 'email_required'.tr();
                               }
                               if (!value.contains('@')) {
-                                return 'Invalid email';
+                                return 'invalid_email'.tr();
                               }
                               return null;
                             },
@@ -485,14 +204,14 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // National ID
                           CustomInputField(
-                            label: "National ID",
+                            label: "national_id".tr(),
                             hint: "ID-XXXX-XXXX",
                             icon: Icons.badge_outlined,
                             inputType: InputType.nationalId,
                             controller: controller.nationalIdController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'National ID is required';
+                                return 'national_id_required'.tr();
                               }
                               return null;
                             },
@@ -502,14 +221,14 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // Birth Date
                           CustomInputField(
-                            label: "Birth Date",
+                            label: "birth_date".tr(),
                             hint: "1995-05-15",
                             icon: Icons.calendar_today_outlined,
                             inputType: InputType.text,
                             controller: controller.birthDateController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Birth date is required';
+                                return 'birth_date_required'.tr();
                               }
                               return null;
                             },
@@ -519,7 +238,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // Password
                           CustomInputField(
-                            label: "Access Cipher",
+                            label: "access_cipher".tr(),
                             hint: "••••••••••••",
                             icon: Icons.lock_outline,
                             inputType: InputType.password,
@@ -528,10 +247,10 @@ class PatientRegistrationScreen extends ConsumerWidget {
                             onTogglePassword: controller.togglePasswordVisibility,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Password is required';
+                                return 'password_required'.tr();
                               }
                               if (value.length < 6) {
-                                return 'Minimum 6 characters';
+                                return 'password_too_short'.tr();
                               }
                               return null;
                             },
@@ -541,7 +260,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           // Confirm Password
                           CustomInputField(
-                            label: "Confirm Access Cipher",
+                            label: "confirm_password".tr(),
                             hint: "••••••••••••",
                             icon: Icons.lock_outline,
                             inputType: InputType.password,
@@ -550,10 +269,10 @@ class PatientRegistrationScreen extends ConsumerWidget {
                             onTogglePassword: controller.togglePasswordVisibility,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Confirm password is required';
+                                return 'confirm_password_required'.tr();
                               }
                               if (value != controller.passwordController.text) {
-                                return 'Passwords do not match';
+                                return 'passwords_dont_match'.tr();
                               }
                               return null;
                             },
@@ -567,8 +286,6 @@ class PatientRegistrationScreen extends ConsumerWidget {
                             onChanged: controller.changeGender,
                           ),
 
-
-
                           SizedBox(height: 32 * scale),
 
                           BloodTypeField(
@@ -578,7 +295,7 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                           SizedBox(height: 32 * scale),
 
-// Height
+                          // Height
                           HeightSlider(
                             height: state.height,
                             onChanged: controller.changeHeight,
@@ -611,23 +328,26 @@ class PatientRegistrationScreen extends ConsumerWidget {
 
                     SizedBox(height: 40 * scale),
 
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 14 * scale,
-                            color: Colors.grey,
-                          ),
-                          children: const [
-                            TextSpan(text: "Existing node detected? "),
-                            TextSpan(
-                              text: "Access Terminal",
-                              style: TextStyle(
-                                color: Color(0xFFEDB1FF),
-                                fontWeight: FontWeight.bold,
-                              ),
+                    GestureDetector(
+                      onTap: () => context.go('/login'),
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 14 * scale,
+                              color: Colors.grey,
                             ),
-                          ],
+                            children: [
+                              TextSpan(text: "existing_node_detected".tr()),
+                              TextSpan(
+                                text: "access_terminal".tr(),
+                                style: const TextStyle(
+                                  color: Color(0xFFEDB1FF),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

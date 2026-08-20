@@ -55,6 +55,8 @@ dependencies:
   flutter_html: ^3.0.0
   flutter_widget_from_html: ^0.17.2
 
+  path: any
+  shared_preferences: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -145,9 +147,18 @@ flutter:
   fonts:
     - family: Cairo
       fonts:
+        - asset: assets/fonts/Cairo/Cairo-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Cairo/Cairo-Light.ttf
+          weight: 300
         - asset: assets/fonts/Cairo/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo/Cairo-SemiBold.ttf
+          weight: 600
         - asset: assets/fonts/Cairo/Cairo-Bold.ttf
           weight: 700
+        - asset: assets/fonts/Cairo/Cairo-Black.ttf
+          weight: 900
 
     - family: SpaceGrotesk
       fonts:

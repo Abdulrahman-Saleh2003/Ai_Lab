@@ -1,5 +1,5 @@
-
 import 'package:ai_lab/controller/home/Chat/chat_state.dart';
+import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/models/home/Chat/message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,20 +11,14 @@ class ChatController extends Notifier<ChatState> {
         Message(
           id: '1',
           text:
-              'مرحباً أحمد، أنا مساعدك الذكي. كيف يمكنني مساعدتك في تحليل تقاريرك اليوم؟',
+              'مرحباً بك في نظام LabSync AI الذكي. كيف يمكنني مساعدتك في تحليل وفهم تقاريرك المخبرية اليوم؟',
           sender: MessageSender.ai,
           timestamp: DateTime.now(),
           suggestion: Suggestion(
-            title: 'تحليل آخر تقرير دم',
-            subtitle: 'تم التحديث أمس',
-            icon: 'bloodtype',
+            title: 'تحليل آخر تقرير مخبري',
+            subtitle: 'استعلام مباشر عبر RAG',
+            icon: 'biotech',
           ),
-        ),
-        Message(
-          id: '2',
-          text: 'أريد رؤية ملخص لنتائج الفحص الأخير. هل هناك أي قراءات مقلقة؟',
-          sender: MessageSender.user,
-          timestamp: DateTime.now(),
         ),
       ],
     );
@@ -34,9 +28,9 @@ class ChatController extends Notifier<ChatState> {
     state = state.copyWith(inputText: text);
   }
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     final text = state.inputText.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || state.isAiTyping) return;
 
     final userMessage = Message(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -52,21 +46,76 @@ class ChatController extends Notifier<ChatState> {
       status: ChatStatus.loading,
     );
 
-    // محاكاة رد الـ AI
-    Future.delayed(const Duration(seconds: 2), () {
-      final aiMessage = Message(
+    try {
+      final homeState = ref.read(homeProvider);
+      final recentReports = homeState.reports;
+
+      if (recentReports.isNotEmpty) {
+        final targetReport = recentReports.first;
+        final res = await ref.read(homeDataProvider).askReportQuestion(
+              reportId: targetReport.reportId,
+              question: text,
+            );
+
+        res.fold(
+          (failure) {
+            final errorMsg = Message(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              text: 'تعذر الاتصال بالمساعد الذكي: ${failure.message}',
+              sender: MessageSender.ai,
+              timestamp: DateTime.now(),
+            );
+            state = state.copyWith(
+              messages: [...state.messages, errorMsg],
+              isAiTyping: false,
+              status: ChatStatus.error,
+            );
+          },
+          (data) {
+            final answer = data['answer']?.toString() ??
+                data['response']?.toString() ??
+                data['message']?.toString() ??
+                'تمت معالجة استفسارك بنجاح.';
+            final aiMessage = Message(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              text: answer,
+              sender: MessageSender.ai,
+              timestamp: DateTime.now(),
+            );
+            state = state.copyWith(
+              messages: [...state.messages, aiMessage],
+              isAiTyping: false,
+              status: ChatStatus.success,
+            );
+          },
+        );
+      } else {
+        final aiMessage = Message(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          text:
+              'لم يتم العثور على تقارير مخبرية مرفوعة في حسابك حالياً للإجابة عن هذا السؤال. يرجى رفع تقرير أولاً ليتمكن النظام من الإجابة بدقة.',
+          sender: MessageSender.ai,
+          timestamp: DateTime.now(),
+        );
+        state = state.copyWith(
+          messages: [...state.messages, aiMessage],
+          isAiTyping: false,
+          status: ChatStatus.success,
+        );
+      }
+    } catch (e) {
+      final errorMsg = Message(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        text: 'حسناً، دعني أراجع آخر تقرير دم لك...',
+        text: 'حدث خطأ غير متوقع أثناء معالجة السؤال.',
         sender: MessageSender.ai,
         timestamp: DateTime.now(),
       );
-
       state = state.copyWith(
-        messages: [...state.messages, aiMessage],
+        messages: [...state.messages, errorMsg],
         isAiTyping: false,
-        status: ChatStatus.success,
+        status: ChatStatus.error,
       );
-    });
+    }
   }
 
   void clearChat() {

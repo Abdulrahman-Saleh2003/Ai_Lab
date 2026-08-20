@@ -1,4 +1,5 @@
 import 'package:ai_lab/core/constant/app_color.dart';
+import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:flutter/material.dart';
 
 class BuildJourneyStep extends StatelessWidget {
@@ -20,14 +21,13 @@ class BuildJourneyStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-
-    final scale = size.width / 375;
+    final scale = AppSize.scale(context);
 
     final color = isActive
-        ?  AppMyColor.blueColor
+        ? AppMyColor.blueColor
         : isCompleted
-        ? AppMyColor.whiteApp
-        : Colors.grey;
+            ? AppMyColor.whiteApp
+            : Colors.grey;
 
     return Column(
       children: [
@@ -37,7 +37,7 @@ class BuildJourneyStep extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isActive
-                ?  AppMyColor.blueColor.withValues(alpha:0.2)
+                ? AppMyColor.blueColor.withValues(alpha: 0.2)
                 : Colors.transparent,
             border: Border.all(
               color: color,
@@ -47,26 +47,23 @@ class BuildJourneyStep extends StatelessWidget {
           child: Icon(
             icon,
             color: color,
-            size: 28 * scale, 
+            size: 28 * scale,
           ),
         ),
-
         SizedBox(height: 12 * scale),
-
         Text(
           title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 14 * scale, 
-            color: isActive ?  AppMyColor.blueColor : color,
+            fontSize: 14 * scale,
+            color: isActive ? AppMyColor.blueColor : color,
           ),
         ),
-
         Text(
           time,
           style: TextStyle(
-            fontSize: 10 * scale, 
-            color: isActive ?  AppMyColor.blueColor : AppMyColor.greyApp,
+            fontSize: 10 * scale,
+            color: isActive ? AppMyColor.blueColor : AppMyColor.greyApp,
           ),
         ),
       ],

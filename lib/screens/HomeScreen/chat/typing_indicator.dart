@@ -18,7 +18,7 @@ class TypingIndicator extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00D2FF).withOpacity(0.2),
+                  color: const Color(0xFF00D2FF).withValues(alpha: 0.2),
                   blurRadius: 10,
                 ),
               ],
@@ -30,14 +30,14 @@ class TypingIndicator extends StatelessWidget {
             height: 52,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             decoration: BoxDecoration(
-              color: const Color(0xFF333538).withOpacity(0.4),
+              color: const Color(0xFF333538).withValues(alpha: 0.4),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
                 bottomLeft: Radius.circular(4),
                 bottomRight: Radius.circular(16),
               ),
-              border: Border.all(color: const Color(0xFF859399).withOpacity(0.15)),
+              border: Border.all(color: const Color(0xFF859399).withValues(alpha: 0.15)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -52,7 +52,7 @@ class TypingIndicator extends StatelessWidget {
                       width: 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFA5E7FF).withOpacity(value),
+                        color: const Color(0xFFA5E7FF).withValues(alpha: value),
                         shape: BoxShape.circle,
                       ),
                     );

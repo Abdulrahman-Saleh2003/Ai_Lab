@@ -1,91 +1,4 @@
-//
-//
-// import 'dart:io';
-//
-// import 'package:ai_lab/models/home/lab_report_models.dart';
-//
-// enum HomeStatus {
-//   initial,    // ما في صورة، أو صورة مختارة وما انبعتت لسا
-//   uploading,  // عم يرفع الصورة
-//   analyzing,  // الصورة انبعتت، عم ننتظر نتيجة التحليل (polling)
-//   ready,      // التحليل خلص، جاهز نعرض النتيجة
-//   error,
-// }
-//
-// // حالة تحميل قائمة كل التقارير (منفصلة عن حالة رفع/تحليل الصورة)
-// enum ReportsListStatus {
-//   initial,
-//   loading,
-//   loaded,
-//   error,
-// }
-//
-// class HomeState {
-//   final int currentIndex;
-//   final HomeStatus status;
-//   final File? selectedImage;
-//   final String? jobId;
-//   final String? errorMessage;
-//   final LabAnalysisResult? analysisResult;
-//
-//   // ─── قائمة كل التقارير (صفحة AllReportsPage) ───
-//   final ReportsListStatus reportsStatus;
-//   final List<LabReportItem> reports;
-//   final String? reportsErrorMessage;
-//
-//   const HomeState({
-//     this.currentIndex = 0,
-//     this.status = HomeStatus.initial,
-//     this.selectedImage,
-//     this.jobId,
-//     this.errorMessage,
-//     this.analysisResult,
-//     this.reportsStatus = ReportsListStatus.initial,
-//     this.reports = const [],
-//     this.reportsErrorMessage,
-//   });
-//
-//   bool get hasImage => selectedImage != null;
-//
-//   HomeState copyWith({
-//     int? currentIndex,
-//     HomeStatus? status,
-//     File? selectedImage,
-//     String? jobId,
-//     String? errorMessage,
-//     LabAnalysisResult? analysisResult,
-//     ReportsListStatus? reportsStatus,
-//     List<LabReportItem>? reports,
-//     String? reportsErrorMessage,
-//     bool clearImage = false,
-//     bool clearError = false,
-//     bool clearJobId = false,
-//     bool clearReportsError = false,
-//   }) {
-//     return HomeState(
-//       currentIndex: currentIndex ?? this.currentIndex,
-//       status: status ?? this.status,
-//       selectedImage: clearImage ? null : (selectedImage ?? this.selectedImage),
-//       jobId: clearJobId ? null : (jobId ?? this.jobId),
-//       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-//       analysisResult: analysisResult ?? this.analysisResult,
-//       reportsStatus: reportsStatus ?? this.reportsStatus,
-//       reports: reports ?? this.reports,
-//       reportsErrorMessage: clearReportsError
-//           ? null
-//           : (reportsErrorMessage ?? this.reportsErrorMessage),
-//     );
-//   }
-// }
 
-
-
-
-// ####################
-///todo  //claude.ai/
-// ##############
-//
-//
 import 'dart:io';
 
 import 'package:ai_lab/models/home/lab_report_models.dart';
@@ -114,6 +27,12 @@ enum ReportAnalysisStatus {
   analyzing,   // عم ننتظر نتيجة الـ OCR (polling)
   ready,
   error,
+  // #########################
+
+  starting,   // عم نطلب بدء التحليل
+  // #########################
+
+
 }
 
 class ReportAnalysisState {
@@ -126,13 +45,25 @@ class ReportAnalysisState {
     this.jobId,
     this.errorMessage,
   });
+  // #########################
+
+  //
+  // bool get isBusy =>
+  //     status == ReportAnalysisStatus.downloading ||
+  //         status == ReportAnalysisStatus.uploading ||
+  //         status == ReportAnalysisStatus.analyzing;
+  // #########################
+  // #########################
 
   bool get isBusy =>
-      status == ReportAnalysisStatus.downloading ||
-          status == ReportAnalysisStatus.uploading ||
+      status == ReportAnalysisStatus.starting ||
           status == ReportAnalysisStatus.analyzing;
 
   bool get isError => status == ReportAnalysisStatus.error;
+  bool get isReady => status == ReportAnalysisStatus.ready;
+// #########################
+
+  // bool get isError => status == ReportAnalysisStatus.error;
 }
 
 class HomeState {

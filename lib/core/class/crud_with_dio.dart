@@ -23,8 +23,8 @@ class DioHelper {
       BaseOptions(
         baseUrl: AppLinkApi.urlServer,
         receiveDataWhenStatusError: true,
-        connectTimeout: const Duration(milliseconds: 45000),
-        receiveTimeout: const Duration(milliseconds: 45000),
+        connectTimeout: const Duration(minutes: 5,  milliseconds: 45000),
+        receiveTimeout: const Duration(minutes: 5,  milliseconds: 45000),
         // connectTimeout: const Duration(milliseconds: 20000),
         // receiveTimeout: const Duration(milliseconds: 20000),
       ),

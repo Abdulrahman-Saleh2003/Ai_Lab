@@ -1,313 +1,3 @@
-//
-//
-// import 'dart:async';
-// import 'dart:io';
-//
-// import 'package:ai_lab/controller/home/home_provider.dart';
-// import 'package:ai_lab/controller/home/home_state.dart';
-// import 'package:ai_lab/models/home/lab_report_models.dart';
-// import 'package:ai_lab/screens/HomeScreen/Home/home_screen.dart';
-// import 'package:ai_lab/screens/HomeScreen/chat/chat_screen.dart';
-// import 'package:ai_lab/screens/HomeScreen/profile/profile.dart';
-// import 'package:ai_lab/screens/HomeScreen/report/cbc_report_screen.dart';
-// import 'package:ai_lab/screens/HomeScreen/report/report_screen.dart';
-// import 'package:ai_lab/screens/HomeScreen/report/all_reports_page.dart';
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:image_picker/image_picker.dart';
-//
-// class HomeController extends Notifier<HomeState> {
-//   final ImagePicker _picker = ImagePicker();
-//   Timer? _pollingTimer;
-//   int _pollAttempts = 0;
-//
-//   // كل 7 ثواني × 25 محاولة ≈ 3 دقائق قبل ما نعتبرها timeout
-//   static const int _maxPollAttempts = 15;
-//
-//   @override
-//   HomeState build() {
-//     // مهم: نلغي أي polling شغال لو الـ Notifier انبنى من جديد
-//     ref.onDispose(() {
-//       _pollingTimer?.cancel();
-//     });
-//     return const HomeState();
-//   }
-//
-//   final List<Widget> pages = [
-//     const HomeScreen(),            // 0 - DASHBOARD
-//     const AllReportsPage(),        // 1 - TESTS
-//     const CBCReportScreen(),       // 2 - APPOINTMENTS
-//     const BloodCountReportPage(),  // 3 - REPORTS
-//     const PatientProfilePage(),    // 4 - SETTINGS
-//     const ChatScreen(),            // 5 - CHAT  ← الأخير
-//   ];
-//
-//   void changePage(int index) {
-//     state = state.copyWith(currentIndex: index);
-//   }
-//
-//   // ─── اختيار صورة من الكاميرا أو المعرض ───
-//   Future<void> pickImage(ImageSource source) async {
-//     try {
-//       final XFile? picked = await _picker.pickImage(
-//         source: source,
-//         imageQuality: 85,
-//         maxWidth: 2000,
-//       );
-//       if (picked != null) {
-//         state = state.copyWith(
-//           selectedImage: File(picked.path),
-//           status: HomeStatus.initial,
-//           clearError: true,
-//         );
-//       }
-//     } catch (e, st) {
-//       debugPrint("PickImage Error: $e");
-//       debugPrint("StackTrace: $st");
-//       state = state.copyWith(
-//         status: HomeStatus.error,
-//         errorMessage:
-//         "تعذر فتح ${source == ImageSource.camera ? 'الكاميرا' : 'المعرض'}: $e",
-//       );
-//     }
-//   }
-//
-//   // ─── إلغاء اختيار الصورة (رجوع لزر Upload) ───
-//   void removeImage() {
-//     _pollingTimer?.cancel();
-//     state = const HomeState(); // يرجع كل شي لحالته الافتراضية
-//   }
-//
-//   // ─── يستخدمها report_details_screen: صورة تقرير قديم (نزّلناها محلياً) ───
-//   // بترسل نفس مسار الـ analyzeImage العادي، بس بتحط الصورة بالـ state أول
-//   Future<void> analyzeExistingImage(File image) async {
-//     print("____________________________________");
-//     print(image.path.toString());
-//     print("____________________________________");
-//
-//     state = state.copyWith(
-//       selectedImage: image,
-//       status: HomeStatus.initial,
-//       clearError: true,
-//       clearJobId: true,
-//     );
-//     await analyzeImage();
-//   }
-//
-//   // ─── الخطوة 1: رفع الصورة، السيرفر بيرجع job_id فوراً ───
-//   Future<void> analyzeImage() async {
-//     if (state.selectedImage == null) return;
-//
-//     state = state.copyWith(status: HomeStatus.uploading, clearError: true);
-//
-//     final result = await ref.read(homeDataProvider).postData(
-//       image: state.selectedImage!,
-//     );
-//
-//     result.fold(
-//           (failure) {
-//         state = state.copyWith(
-//           status: HomeStatus.error,
-//           errorMessage: "فشل رفع الصورة، حاول مرة أخرى",
-//         );
-//       },
-//           (data) {
-//         final String? jobId = (data is Map) ? data['job_id']?.toString() : null;
-//
-//         if (jobId == null || jobId.isEmpty) {
-//           state = state.copyWith(
-//             status: HomeStatus.error,
-//             errorMessage: "لم يتم استلام رقم العملية من السيرفر",
-//           );
-//           return;
-//         }
-//
-//         state = state.copyWith(status: HomeStatus.analyzing, jobId: jobId);
-//         _startPolling(jobId);
-//       },
-//     );
-//   }
-//
-//   // ─── الخطوة 2: كل 7 ثواني نسأل السيرفر خلص التحليل ولا لسا ───
-//   void _startPolling(String jobId) {
-//     _pollingTimer?.cancel();
-//     _pollingTimer = null; // ✅ تأكيد إضافي
-//
-//     _pollAttempts = 0;
-//     _pollingTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-//       _checkResult(jobId);
-//     });
-//   }
-//
-//   Future<void> _checkResult(String jobId) async {
-//     // إذا المستخدم غيّر الصورة أو خرج من الحالة، منوقف الطلب
-//     if (state.jobId != jobId) {
-//       _pollingTimer?.cancel();
-//       return;
-//     }
-//
-//     _pollAttempts++;
-//     if (_pollAttempts > _maxPollAttempts) {
-//       _pollingTimer?.cancel();
-//       // ✅ تحقق إضافي: بس لو لسا هاد الـ job هو الحالي
-//       if (state.jobId == jobId) {
-//         state = state.copyWith(
-//           status: HomeStatus.error,
-//           errorMessage: "استغرق التحليل وقتاً أطول من المتوقع. حاول رفع الصورة مرة أخرى.",
-//         );
-//       }
-//       return;
-//     }
-//
-//     final result = await ref.read(homeDataProvider).checkResult(jobId);
-//
-//     // ✅✅ التحقق الأهم: بعد الـ await، تأكد الـ job لسا هو الحالي
-//     // (ممكن يكون تبدّل بين ما بلشنا الطلب وما رجعنا الجواب)
-//     if (state.jobId != jobId) {
-//       return; // تجاهل الرد، صار في job أحدث
-//     }
-//
-//     result.fold(
-//           (failure) {
-//         debugPrint("Check result failed, retrying in 7s...");
-//       },
-//           (response) {
-//         final dynamic rawBody = response.data ?? response;
-//         if (rawBody is! Map) return;
-//
-//         final jobStatus = LabJobStatus.fromJson(Map<String, dynamic>.from(rawBody));
-//
-//         if (jobStatus.isFailed) {
-//           _pollingTimer?.cancel();
-//           state = state.copyWith(
-//             status: HomeStatus.error,
-//             errorMessage: "فشل تحليل الصورة بالسيرفر",
-//           );
-//           return;
-//         }
-//
-//         if (jobStatus.isDone && jobStatus.result != null) {
-//           _pollingTimer?.cancel();
-//           state = state.copyWith(
-//             status: HomeStatus.ready,
-//             analysisResult: jobStatus.result,
-//           );
-//         }
-//       },
-//     );
-//   }
-//
-//
-//
-//
-//
-//
-//
-//
-//   // ─── يضغط "اذهب لمشاهدة النتائج" ───
-//   // حالياً منرجع الصفحة لوضعها الأصلي (زر Upload)، والانتقال لصفحة
-//   // النتيجة نفسها منضيفه لاحقاً حسب ما حكينا
-//   void goToResults() {
-//     _pollingTimer?.cancel();
-//     state = const HomeState();
-//   }
-//
-//
-//
-//
-//   Future<void> fetchAllReports({bool forceRefresh = false}) async {
-//     // إذا البيانات موجودة أصلاً ومش forceRefresh → ما تعمل شيء
-//     if (!forceRefresh &&
-//         state.reportsStatus == ReportsListStatus.loaded &&
-//         state.reports.isNotEmpty) {
-//       return;
-//     }
-//
-//     // إذا عم يحمّل أصلاً، منتجاهل الطلب المكرر
-//     if (state.reportsStatus == ReportsListStatus.loading) return;
-//
-//     state = state.copyWith(
-//       reportsStatus: ReportsListStatus.loading,
-//       clearReportsError: true,
-//     );
-//
-//     final result = await ref.read(homeDataProvider).getAllReports();
-//
-//     result.fold(
-//           (failure) {
-//         state = state.copyWith(
-//           reportsStatus: ReportsListStatus.error,
-//           reportsErrorMessage: "تعذر تحميل التقارير، تأكد من الاتصال",
-//         );
-//       },
-//           (response) {
-//         final dynamic rawBody = response.data ?? response;
-//         if (rawBody is! Map) {
-//           state = state.copyWith(
-//             reportsStatus: ReportsListStatus.error,
-//             reportsErrorMessage: "شكل البيانات القادمة من السيرفر غير متوقع",
-//           );
-//           return;
-//         }
-//
-//         final parsed =
-//         LabReportsResponse.fromJson(Map<String, dynamic>.from(rawBody));
-//
-//         state = state.copyWith(
-//           reportsStatus: ReportsListStatus.loaded,
-//           reports: parsed.results,
-//         );
-//       },
-//     );
-//   }
-//   // ─── جلب كل التقارير (تستخدمها AllReportsPage) ───
-//   Future<void> fetchAllReports1() async {
-//     // إذا عم يحمّل أصلاً، منتجاهل الطلب المكرر
-//     if (state.reportsStatus == ReportsListStatus.loading) return;
-//
-//     state = state.copyWith(
-//       reportsStatus: ReportsListStatus.loading,
-//       clearReportsError: true,
-//     );
-//
-//     final result = await ref.read(homeDataProvider).getAllReports();
-//
-//     result.fold(
-//           (failure) {
-//         state = state.copyWith(
-//           reportsStatus: ReportsListStatus.error,
-//           reportsErrorMessage: "تعذر تحميل التقارير، تأكد من الاتصال",
-//         );
-//       },
-//           (response) {
-//         final dynamic rawBody = response.data ?? response;
-//         if (rawBody is! Map) {
-//           state = state.copyWith(
-//             reportsStatus: ReportsListStatus.error,
-//             reportsErrorMessage: "شكل البيانات القادمة من السيرفر غير متوقع",
-//           );
-//           return;
-//         }
-//
-//         final parsed =
-//         LabReportsResponse.fromJson(Map<String, dynamic>.from(rawBody));
-//
-//         state = state.copyWith(
-//           reportsStatus: ReportsListStatus.loaded,
-//           reports: parsed.results,
-//         );
-//       },
-//     );
-//   }
-// }
-//
-
-// ####################
-///todo  //claude.ai/
-// ##############
-
-
 
 import 'dart:async';
 import 'dart:io';
@@ -520,12 +210,15 @@ class HomeController extends Notifier<HomeState> {
     }
     state = state.copyWith(expandedReportIds: updated);
   }
+  // #########################
 
-  void _updateReportAnalysis(String reportId, ReportAnalysisState newState) {
-    final updated = Map<String, ReportAnalysisState>.from(state.reportAnalysis);
-    updated[reportId] = newState;
-    state = state.copyWith(reportAnalysis: updated);
-  }
+  // void _updateReportAnalysis(String reportId, ReportAnalysisState newState) {
+  //   final updated = Map<String, ReportAnalysisState>.from(state.reportAnalysis);
+  //   updated[reportId] = newState;
+  //   state = state.copyWith(reportAnalysis: updated);
+  // }
+
+  // #########################
 
   /// ينزّل صورة التقرير من السيرفر لملف مؤقت محلي (نفس منطق ReportDetailsScreen سابقاً)
   Future<File?> _downloadImageToTempFile(String url) async {
@@ -545,37 +238,38 @@ class HomeController extends Notifier<HomeState> {
     return null;
   }
 
-  /// ✅ يبدأ تحليل تقرير محدد من القائمة: تنزيل الصورة → رفعها → polling
+
+
+
+
+
+  // ═══════════════════════════════════════════════════════════
+  // تحليل تقرير موجود في القائمة (بالـ report_id فقط)
+  // ═══════════════════════════════════════════════════════════
+
+
+
+  void _updateReportAnalysis(String reportId, ReportAnalysisState newState) {
+    final updated = Map<String, ReportAnalysisState>.from(state.reportAnalysis);
+    updated[reportId] = newState;
+    state = state.copyWith(reportAnalysis: updated);
+  }
+
+  /// يبدأ تحليل تقرير من القائمة عبر endpoint الباك اند الجديد
   Future<void> analyzeReportInList(LabReportItem report) async {
-    final imageUrl = report.fullImageUrl;
-    if (imageUrl == null) return;
-
     final reportId = report.reportId;
+    if (reportId.isEmpty) return;
+
+    // إذا كان عم يحلل أصلاً → تجاهل
+    if (state.analysisFor(reportId).isBusy) return;
 
     _updateReportAnalysis(
       reportId,
-      const ReportAnalysisState(status: ReportAnalysisStatus.downloading),
+      const ReportAnalysisState(status: ReportAnalysisStatus.starting),
     );
 
-    final file = await _downloadImageToTempFile(imageUrl);
-
-    if (file == null) {
-      _updateReportAnalysis(
-        reportId,
-        const ReportAnalysisState(
-          status: ReportAnalysisStatus.error,
-          errorMessage: "تعذر تحميل صورة التقرير، حاول مرة أخرى",
-        ),
-      );
-      return;
-    }
-
-    _updateReportAnalysis(
-      reportId,
-      const ReportAnalysisState(status: ReportAnalysisStatus.uploading),
-    );
-
-    final result = await ref.read(homeDataProvider).postData(image: file);
+    final result =
+    await ref.read(homeDataProvider).startReportAnalysis(reportId);
 
     result.fold(
           (failure) {
@@ -583,41 +277,234 @@ class HomeController extends Notifier<HomeState> {
           reportId,
           const ReportAnalysisState(
             status: ReportAnalysisStatus.error,
-            errorMessage: "فشل رفع الصورة، حاول مرة أخرى",
+            errorMessage: "فشل بدء التحليل، حاول مرة أخرى",
           ),
         );
       },
           (data) {
-        final String? jobId = (data is Map) ? data['job_id']?.toString() : null;
+        final dynamic raw = data is Map ? data : (data.data ?? data);
+        final map = raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
 
-        if (jobId == null || jobId.isEmpty) {
+        final jobId = map['job_id']?.toString();
+
+        _updateReportAnalysis(
+          reportId,
+          ReportAnalysisState(
+            status: ReportAnalysisStatus.analyzing,
+            jobId: jobId,
+          ),
+        );
+
+        // نبدأ polling على analysis-result (أو status)
+        _startReportPolling(reportId);
+      },
+    );
+  }
+
+  void _startReportPolling(String reportId) {
+    _reportPollingTimers[reportId]?.cancel();
+    _reportPollAttempts[reportId] = 0;
+
+    _reportPollingTimers[reportId] = Timer.periodic(
+      const Duration(seconds: 8),
+          (_) => _checkReportAnalysisResult(reportId),
+    );
+
+    // أول فحص فوري
+    _checkReportAnalysisResult(reportId);
+  }
+
+  Future<void> _checkReportAnalysisResult(String reportId) async {
+    final current = state.reportAnalysis[reportId];
+    if (current == null ||
+        current.status != ReportAnalysisStatus.analyzing) {
+      _reportPollingTimers[reportId]?.cancel();
+      _reportPollingTimers.remove(reportId);
+      return;
+    }
+
+    final attempts = (_reportPollAttempts[reportId] ?? 0) + 1;
+    _reportPollAttempts[reportId] = attempts;
+
+    if (attempts > _maxPollAttempts) {
+      _reportPollingTimers[reportId]?.cancel();
+      _reportPollingTimers.remove(reportId);
+      _updateReportAnalysis(
+        reportId,
+        const ReportAnalysisState(
+          status: ReportAnalysisStatus.error,
+          errorMessage: "استغرق التحليل وقتاً أطول من المتوقع. حاول مرة أخرى.",
+        ),
+      );
+      return;
+    }
+
+    final result =
+    await ref.read(homeDataProvider).getReportAnalysisResult(reportId);
+
+    // حماية بعد الـ await
+    final latest = state.reportAnalysis[reportId];
+    if (latest == null ||
+        latest.status != ReportAnalysisStatus.analyzing) {
+      return;
+    }
+
+    result.fold(
+          (failure) {
+        debugPrint("Check analysis-result failed for $reportId, retrying...");
+      },
+          (response) {
+        final dynamic rawBody = response.data ?? response;
+        if (rawBody is! Map) return;
+
+        final map = Map<String, dynamic>.from(rawBody);
+
+        final isAnalyzed = map['is_analyzed'] == true;
+        final statusStr = map['status']?.toString() ?? '';
+        final found = map['found'] != false;
+
+        // خطأ من السيرفر
+        if (map['error'] != null) {
+          _reportPollingTimers[reportId]?.cancel();
+          _reportPollingTimers.remove(reportId);
           _updateReportAnalysis(
             reportId,
-            const ReportAnalysisState(
+            ReportAnalysisState(
               status: ReportAnalysisStatus.error,
-              errorMessage: "لم يتم استلام رقم العملية من السيرفر",
+              errorMessage: map['error'].toString(),
             ),
           );
           return;
         }
 
-        _updateReportAnalysis(
-          reportId,
-          ReportAnalysisState(status: ReportAnalysisStatus.analyzing, jobId: jobId),
-        );
-        _startReportPolling(reportId, jobId);
+        // لسا pending / processing
+        if (!isAnalyzed &&
+            (statusStr == 'pending' ||
+                statusStr == 'processing' ||
+                statusStr.isEmpty)) {
+          return; // نكمل polling
+        }
+
+        // تم التحليل
+        if (isAnalyzed || statusStr == 'done' || statusStr == 'completed') {
+          _reportPollingTimers[reportId]?.cancel();
+          _reportPollingTimers.remove(reportId);
+          _reportPollAttempts.remove(reportId);
+
+          // استخراج النتيجة
+          LabAnalysisResult? aiResult;
+          final resultRaw = map['result'] ?? map['ai_result'];
+          if (resultRaw is Map && resultRaw.isNotEmpty) {
+            try {
+              final resultMap = Map<String, dynamic>.from(resultRaw);
+              if (resultMap.containsKey('current_report')) {
+                aiResult = LabAnalysisResult.fromJson(resultMap);
+              } else if (resultMap.containsKey('panels')) {
+                aiResult = LabAnalysisResult(
+                  currentReport: CurrentReport.fromJson(resultMap),
+                );
+              }
+            } catch (e) {
+              debugPrint("Parse ai result error: $e");
+            }
+          }
+
+          // تحديث التقرير بالقائمة
+          final updatedReports = state.reports.map((r) {
+            if (r.reportId != reportId) return r;
+            return r.copyWith(
+              isAnalyzed: true,
+              aiResult: aiResult ?? r.aiResult,
+            );
+          }).toList();
+
+          state = state.copyWith(reports: updatedReports);
+
+          _updateReportAnalysis(
+            reportId,
+            const ReportAnalysisState(status: ReportAnalysisStatus.ready),
+          );
+        }
       },
     );
   }
 
-  void _startReportPolling(String reportId, String jobId) {
-    _reportPollingTimers[reportId]?.cancel();
-    _reportPollAttempts[reportId] = 0;
-    _reportPollingTimers[reportId] =
-        Timer.periodic(const Duration(seconds: 10), (timer) {
-          _checkReportResult(reportId, jobId);
-        });
-  }
+  /// ✅ يبدأ تحليل تقرير محدد من القائمة: تنزيل الصورة → رفعها → polling
+  // Future<void> analyzeReportInList(LabReportItem report) async {
+  //   final imageUrl = report.fullImageUrl;
+  //   if (imageUrl == null) return;
+  //
+  //   final reportId = report.reportId;
+  //
+  //   _updateReportAnalysis(
+  //     reportId,
+  //     const ReportAnalysisState(status: ReportAnalysisStatus.downloading),
+  //   );
+  //
+  //   final file = await _downloadImageToTempFile(imageUrl);
+  //
+  //   if (file == null) {
+  //     _updateReportAnalysis(
+  //       reportId,
+  //       const ReportAnalysisState(
+  //         status: ReportAnalysisStatus.error,
+  //         errorMessage: "تعذر تحميل صورة التقرير، حاول مرة أخرى",
+  //       ),
+  //     );
+  //     return;
+  //   }
+  //
+  //   _updateReportAnalysis(
+  //     reportId,
+  //     const ReportAnalysisState(status: ReportAnalysisStatus.uploading),
+  //   );
+  //
+  //   final result = await ref.read(homeDataProvider).postData(image: file);
+  //
+  //   result.fold(
+  //         (failure) {
+  //       _updateReportAnalysis(
+  //         reportId,
+  //         const ReportAnalysisState(
+  //           status: ReportAnalysisStatus.error,
+  //           errorMessage: "فشل رفع الصورة، حاول مرة أخرى",
+  //         ),
+  //       );
+  //     },
+  //         (data) {
+  //       final String? jobId = (data is Map) ? data['job_id']?.toString() : null;
+  //
+  //       if (jobId == null || jobId.isEmpty) {
+  //         _updateReportAnalysis(
+  //           reportId,
+  //           const ReportAnalysisState(
+  //             status: ReportAnalysisStatus.error,
+  //             errorMessage: "لم يتم استلام رقم العملية من السيرفر",
+  //           ),
+  //         );
+  //         return;
+  //       }
+  //
+  //       _updateReportAnalysis(
+  //         reportId,
+  //         ReportAnalysisState(status: ReportAnalysisStatus.analyzing, jobId: jobId),
+  //       );
+  //       _startReportPolling(reportId, jobId);
+  //     },
+  //   );
+  // }
+
+
+
+  //
+  // void _startReportPolling(String reportId, String jobId) {
+  //   _reportPollingTimers[reportId]?.cancel();
+  //   _reportPollAttempts[reportId] = 0;
+  //   _reportPollingTimers[reportId] =
+  //       Timer.periodic(const Duration(seconds: 10), (timer) {
+  //         _checkReportResult(reportId, jobId);
+  //       });
+  // }
 
   Future<void> _checkReportResult(String reportId, String jobId) async {
     // ─── حماية من Race Condition (نفس منطق الـ polling الرئيسي) ───
@@ -684,25 +571,6 @@ class HomeController extends Notifier<HomeState> {
             return r.copyWith(isAnalyzed: true, aiResult: jobStatus.result);
           }).toList();
 
-
-
-          // ######################
-          /// todo // تعديل 2 كلاود
-          // ######################
-          // ✅ فتح البطاقة تلقائياً لعرض النتائج فور جهوزيتها
-          // final newExpanded = Set<String>.from(state.expandedReportIds)
-          //   ..add(reportId);
-
-          // state = state.copyWith(
-          //   reports: updatedReports,
-          //   expandedReportIds: newExpanded,
-          // );
-
-          // ######################
-          /// todo // تعديل 2 كلاود
-          // ######################
-
-
           state = state.copyWith(
             reports: updatedReports,
             // expandedReportIds: newExpanded,  ← احذف هاد السطر كمان
@@ -759,5 +627,22 @@ class HomeController extends Notifier<HomeState> {
         );
       },
     );
+  }
+
+
+// #######################
+  /// يجيب أحدث التقارير لعرضها في الهوم (Recent Analytics)
+  Future<void> loadRecentReportsForHome() async {
+    // إذا القائمة محمّلة مسبقاً → ما نعيد الطلب
+    if (state.reportsStatus == ReportsListStatus.loaded &&
+        state.reports.isNotEmpty) {
+      return;
+    }
+    await fetchAllReports();
+  }
+
+  Future<void> fetchReportsByType(String type) async {
+    final result = await ref.read(homeDataProvider).getReportsByType(type);
+    // نفس منطق parse تبع fetchAllReports حسب شكل الرد من السيرفر
   }
 }

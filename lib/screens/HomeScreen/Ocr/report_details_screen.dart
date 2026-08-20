@@ -1106,6 +1106,7 @@ import 'dart:io';
 import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/controller/home/home_state.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
+import 'package:ai_lab/screens/HomeScreen/report/report_chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1582,16 +1583,47 @@ class _ReportDetailsScreenState extends ConsumerState<ReportDetailsScreen> {
 
         const SizedBox(height: 20),
 
-        // زر التحدث مع الشات
+        // // زر التحدث مع الشات
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: ElevatedButton.icon(
+        //     onPressed: () {
+        //       // TODO: روح على الشات مع سياق التقرير
+        //       // مثال: Navigator.push(... ChatScreen(reportId: widget.report.reportId));
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(
+        //             content: Text('سيتم فتح الشات مع نتائج هذا التقرير قريباً')),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        //     label: const Text(
+        //       'تحدث مع الشات حول هذا التحليل',
+        //       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        //     ),
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: const Color(0xFF6E208C),
+        //       padding: const EdgeInsets.symmetric(vertical: 16),
+        //       shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(50)),
+        //     ),
+        //   ),
+        // ),
+
+
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: روح على الشات مع سياق التقرير
-              // مثال: Navigator.push(... ChatScreen(reportId: widget.report.reportId));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('سيتم فتح الشات مع نتائج هذا التقرير قريباً')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ReportChatScreen(
+                    reportId: widget.report.reportId, // أو widget.report.reportId
+                    reportTitle: widget.report.title.isNotEmpty
+                        ? widget.report.title
+                        : widget.report.reportType,
+                  ),
+                ),
               );
             },
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
@@ -1603,10 +1635,11 @@ class _ReportDetailsScreenState extends ConsumerState<ReportDetailsScreen> {
               backgroundColor: const Color(0xFF6E208C),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
+                borderRadius: BorderRadius.circular(50),
+              ),
             ),
           ),
-        ),
+        )
       ],
     );
   }

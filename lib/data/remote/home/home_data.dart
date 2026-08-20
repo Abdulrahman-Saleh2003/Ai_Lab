@@ -51,14 +51,84 @@ class HomeData {
 
 
 
-// ─── سؤال الشات عن تقرير محدد ───
+
+
   Future askReportQuestion({
     required String reportId,
     required String question,
   }) async {
     return await crud.postData(
       linkUrl: "${AppLinkApi.chatReportBase}$reportId/",
-      data: {"question": question},
+      data: <String, dynamic>{
+        "question": question,
+      },
+    );
+  }
+
+
+  // ################
+
+  /// POST /patients/my-reports/{reportId}/analyze/
+  Future startReportAnalysis(String reportId) async {
+    return await crud.postData(
+      linkUrl: "${AppLinkApi.reportAnalyzeBase}$reportId/analyze/",
+      data: <String, dynamic>{},
+    );
+  }
+
+  /// GET /patients/my-reports/{reportId}/status/
+  Future getReportAnalysisStatus(String reportId) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportAnalyzeBase}$reportId/status/",
+    );
+  }
+
+  /// GET /patients/my-reports/{reportId}/analysis-result/
+  Future getReportAnalysisResult(String reportId) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportAnalyzeBase}$reportId/analysis-result/",
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+  // ######################
+
+  // ─── فلاتر ───
+  Future getReportsByType(String typeName) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByType}$typeName/",
+    );
+  }
+
+  Future getReportsByCategory(String categoryName) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByCategory}$categoryName/",
+    );
+  }
+
+  Future getReportsByPriority(String priorityName) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByPriority}$priorityName/",
+    );
+  }
+
+  Future getReportsByStatus(String statusName) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportsByStatus}$statusName/",
+    );
+  }
+
+  Future getReportDetail(String reportId) async {
+    return await crud.getData(
+      linkUrl: "${AppLinkApi.reportDetail}$reportId/",
     );
   }
 }

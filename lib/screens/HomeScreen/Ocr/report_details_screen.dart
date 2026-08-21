@@ -1,6 +1,8 @@
+import 'dart:ui' as ui;
 import 'package:ai_lab/controller/report_details/report_details_controller.dart';
 import 'package:ai_lab/controller/report_details/report_details_provider.dart';
 import 'package:ai_lab/controller/report_details/report_details_state.dart';
+import 'package:ai_lab/core/theme/medical_status_theme.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
 import 'package:ai_lab/screens/HomeScreen/report/report_chat_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -64,14 +66,6 @@ class ReportDetailsScreen extends ConsumerWidget {
       'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
-
-  Color _testStatusColor(String status) {
-    final s = status.toLowerCase();
-    if (s.contains('critical')) return const Color(0xFFEF4444);
-    if (s.contains('high') || s.contains('low')) return const Color(0xFFF59E0B);
-    if (s.contains('normal')) return const Color(0xFF10B981);
-    return const Color(0xFF00D2FF);
   }
 
   @override
@@ -353,70 +347,157 @@ class ReportDetailsScreen extends ConsumerWidget {
           _infoBox("no_extracted_tests".tr())
         else
           ...tests.map((test) {
-            final color = _testStatusColor(test.status);
+            final theme = MedicalTestTheme.fromTest(test);
+            final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
+
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: _surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _outlineVar),
+                border: Border.all(
+                  color: theme.borderColor,
+                  width: theme.hasWarningBorder ? 1.5 : 1.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.borderColor.withValues(
+                      alpha: theme.hasWarningBorder ? 0.15 : 0.04,
+                    ),
+                    blurRadius: theme.hasWarningBorder ? 16 : 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
-                          test.displayTitle,
-                          style: const TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              test.displayTitle,
+                              style: const TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            if (test.testName.isNotEmpty &&
+                                test.testName != test.displayTitle)
+                              Text(
+                                test.testName,
+                                style: const TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 11.5,
+                                  color: _onSurfaceVar,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                      Text(
-                        test.value.isNotEmpty ? test.value : '-',
-                        style: TextStyle(
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            test.value.isNotEmpty ? test.value : '-',
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: theme.textColor,
+                            ),
+                          ),
+                          if (test.unit.isNotEmpty) ...[
+                            const SizedBox(width: 4),
+                            Text(
+                              test.unit,
+                              style: const TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 11.5,
+                                color: _onSurfaceVar,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${test.referenceRange} ${test.unit}',
-                    style: const TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 12,
-                      color: _onSurfaceVar,
-                    ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${test.referenceRange} ${test.unit}'.trim(),
+                        style: const TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11.5,
+                          color: _onSurfaceVar,
+                        ),
+                      ),
+                      if (theme.hasWarningBorder)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF9100).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            "تنبيه سريري",
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFFF9100),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
                     child: LinearProgressIndicator(
-                      value: test.progress,
-                      backgroundColor: const Color(0xFF333538),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
-                      minHeight: 6,
+                      value: theme.ratio,
+                      backgroundColor: const Color(0xFF282A2D),
+                      valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                      minHeight: 7,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    test.statusAr.isNotEmpty ? test.statusAr : test.status,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: color,
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: theme.badgeBg,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: theme.borderColor.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(theme.icon, size: 14, color: theme.textColor),
+                        const SizedBox(width: 6),
+                        Text(
+                          isRtl ? theme.statusTextAr : theme.statusText,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.bold,
+                            color: theme.textColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

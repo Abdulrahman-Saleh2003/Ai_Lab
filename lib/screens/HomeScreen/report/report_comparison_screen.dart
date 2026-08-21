@@ -5,6 +5,7 @@ import 'package:ai_lab/controller/comparison/comparison_state.dart';
 import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:ai_lab/models/home/Chat/message.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
+import 'package:ai_lab/core/theme/medical_status_theme.dart';
 import 'package:ai_lab/core/widgets/medical_markdown_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -396,6 +397,8 @@ class _ReportComparisonScreenState
         }
       }
 
+      final currTheme = MedicalTestTheme.fromTest(curr);
+
       widgets.add(
         Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -403,7 +406,19 @@ class _ReportComparisonScreenState
           decoration: BoxDecoration(
             color: _surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _outlineVar.withValues(alpha: 0.5)),
+            border: Border.all(
+              color: currTheme.borderColor,
+              width: currTheme.hasWarningBorder ? 1.5 : 1.0,
+            ),
+            boxShadow: currTheme.hasWarningBorder
+                ? [
+                    BoxShadow(
+                      color: currTheme.borderColor.withValues(alpha: 0.12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    )
+                  ]
+                : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,7 +470,7 @@ class _ReportComparisonScreenState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        prev != null ? '${prev.value} ${prev.unit}' : '—',
+                        prev != null ? '${prev.value} ${prev.unit}'.trim() : '—',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -471,31 +486,60 @@ class _ReportComparisonScreenState
                     children: [
                       Text(
                         "current_value".tr(),
-                        style: const TextStyle(fontSize: 11, color: _primary),
+                        style: TextStyle(fontSize: 11, color: currTheme.textColor),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${curr.value} ${curr.unit}',
-                        style: const TextStyle(
+                        '${curr.value} ${curr.unit}'.trim(),
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: _primary,
+                          color: currTheme.textColor,
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              if (curr.referenceRange.isNotEmpty)
-                Text(
-                  'المعدل الطبيعي: ${curr.referenceRange} ${curr.unit}',
-                  style: const TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11,
-                    color: _onSurfaceVar,
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (curr.referenceRange.isNotEmpty)
+                    Text(
+                      'المعدل الطبيعي: ${curr.referenceRange} ${curr.unit}'.trim(),
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11,
+                        color: _onSurfaceVar,
+                      ),
+                    ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: currTheme.badgeBg,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: currTheme.borderColor.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(currTheme.icon, size: 12, color: currTheme.textColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          currTheme.statusTextAr,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: currTheme.textColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
+              ),
             ],
           ),
         ),

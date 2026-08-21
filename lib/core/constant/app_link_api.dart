@@ -1,8 +1,8 @@
 class AppLinkApi {
-  // static const String urlSBase = "10.163.189.209";
+  static const String urlSBase = "10.163.189.209";
   // static const String urlSBase = "10.227.32.209";
-  static const String urlSBase = "192.168.1.107";
-
+  // static const String urlSBase = "192.168.1.107";
+  // 10.163.189.209
   // 192.168.1.107
   // 10.163.189.209
   // 127.0.0.1

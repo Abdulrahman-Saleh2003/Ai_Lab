@@ -45,7 +45,7 @@ class HomeController extends Notifier<HomeState> {
     const HomeScreen(),
     const AllReportsPage(),
     const CBCReportScreen(),
-    const BloodCountReportPage(),
+    // const BloodCountReportPage(),
     const PatientProfilePage(),
     ChatScreen(),
   ];

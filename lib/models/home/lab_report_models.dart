@@ -152,7 +152,7 @@ class LabAnalysisResult {
   const LabAnalysisResult({required this.currentReport});
 
   factory LabAnalysisResult.fromJson(Map<String, dynamic> json) {
-    final currentReportJson = json['current_report'];
+    final currentReportJson = json['current_report'] ?? (json.containsKey('panels') ? json : null);
     return LabAnalysisResult(
       currentReport: CurrentReport.fromJson(
         currentReportJson is Map
@@ -176,17 +176,34 @@ class LabJobStatus {
   const LabJobStatus({required this.status, this.result});
 
   factory LabJobStatus.fromJson(Map<String, dynamic> json) {
-    final resultJson = json['result'];
+    final resultJson = json['result'] ?? json['ocr_result'] ?? json['ai_result'];
+    LabAnalysisResult? parsedResult;
+    if (resultJson is Map && resultJson.isNotEmpty) {
+      final resultMap = Map<String, dynamic>.from(resultJson);
+      if (resultMap.containsKey('current_report')) {
+        parsedResult = LabAnalysisResult.fromJson(resultMap);
+      } else if (resultMap.containsKey('panels')) {
+        parsedResult = LabAnalysisResult(
+          currentReport: CurrentReport.fromJson(resultMap),
+        );
+      }
+    }
+    final rawStatus = json['status']?.toString().toLowerCase() ?? '';
+    final finalStatus = rawStatus.isNotEmpty
+        ? rawStatus
+        : (parsedResult != null ? 'done' : 'pending');
+
     return LabJobStatus(
-      status: json['status']?.toString() ?? '',
-      result: resultJson is Map
-          ? LabAnalysisResult.fromJson(Map<String, dynamic>.from(resultJson))
-          : null,
+      status: finalStatus,
+      result: parsedResult,
     );
   }
 
   bool get isDone =>
-      status == 'done' || status == 'completed' || status == 'success';
+      status == 'done' ||
+      status == 'completed' ||
+      status == 'success' ||
+      result != null;
   bool get isFailed => status == 'failed' || status == 'error';
 }
 
@@ -360,7 +377,7 @@ class LabReportItem {
 
   factory LabReportItem.fromJson(Map<String, dynamic> json) {
     final patientJson = json['patient'];
-    final aiResultJson = json['ai_result'];
+    final aiResultJson = json['ai_result'] ?? json['ocr_result'] ?? json['result'];
 
     return LabReportItem(
       reportId: json['report_id']?.toString() ?? '',
@@ -384,7 +401,7 @@ class LabReportItem {
       labName: json['lab_name']?.toString() ?? '',
       category: json['category']?.toString() ?? '',
       bodyPart: json['body_part']?.toString() ?? '',
-      isAnalyzed: json['is_analyzed'] == true,
+      isAnalyzed: json['is_analyzed'] == true || (aiResultJson is Map && aiResultJson.isNotEmpty),
       aiResult: (aiResultJson is Map && aiResultJson.isNotEmpty)
           ? LabAnalysisResult.fromJson(Map<String, dynamic>.from(aiResultJson))
           : null,

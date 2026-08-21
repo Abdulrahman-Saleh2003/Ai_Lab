@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ai_lab/core/class/crud_with_dio.dart';
 import 'package:ai_lab/core/class/status_request.dart';
 import 'package:ai_lab/core/functions/check_internet.dart';
+import 'package:ai_lab/core/shared/cache_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -88,9 +89,15 @@ class Crud {
     required String linkUrl,
     required File? image,
   }) async {
-    nameRequest ??= "files";
+    nameRequest ??= "image";
     final uri = Uri.parse(linkUrl);
     final request = http.MultipartRequest("POST", uri);
+
+    final token = CacheHelper.getUserToken();
+    if (token != null && token.isNotEmpty) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    request.headers['Accept'] = 'application/json';
 
     if (image != null) {
       final length = await image.length();
@@ -108,13 +115,19 @@ class Crud {
       request.fields[key.toString()] = value.toString();
     });
 
-    final myRequest = await request.send();
-    final response = await http.Response.fromStream(myRequest);
+    try {
+      final myRequest = await request.send();
+      final response = await http.Response.fromStream(myRequest);
 
-    if (response.statusCode >= 200 && response.statusCode <= 202) {
-      final Map responseBody = jsonDecode(response.body) as Map;
-      return Right(responseBody);
-    } else {
+      if (response.statusCode >= 200 && response.statusCode <= 202) {
+        final Map responseBody = jsonDecode(response.body) as Map;
+        return Right(responseBody);
+      } else {
+        debugPrint("Multipart upload error on $linkUrl: status ${response.statusCode} => ${response.body}");
+        return const Left(StatusRequest.serverFailure);
+      }
+    } catch (e) {
+      debugPrint("Multipart upload exception on $linkUrl: $e");
       return const Left(StatusRequest.serverFailure);
     }
   }

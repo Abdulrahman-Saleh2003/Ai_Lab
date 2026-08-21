@@ -306,10 +306,15 @@ class HomeController extends Notifier<HomeState> {
         if (response is! Map) return;
 
         final map = Map<String, dynamic>.from(response);
-        final isAnalyzed = map['is_analyzed'] == true;
-        final statusStr = map['status']?.toString() ?? '';
+        final resultRaw = map['ocr_result'] ?? map['result'] ?? map['ai_result'];
+        final bool hasOcrData = (resultRaw is Map && resultRaw.isNotEmpty);
+        final statusStr = map['status']?.toString().toLowerCase() ?? '';
+        final isAnalyzed = map['is_analyzed'] == true ||
+            statusStr == 'done' ||
+            statusStr == 'completed' ||
+            hasOcrData;
 
-        if (map['error'] != null) {
+        if (map['error'] != null && map['error'].toString().isNotEmpty) {
           _reportPollingTimers[reportId]?.cancel();
           _reportPollingTimers.remove(reportId);
           _updateReportAnalysis(
@@ -322,48 +327,46 @@ class HomeController extends Notifier<HomeState> {
           return;
         }
 
-        if (!isAnalyzed &&
-            (statusStr == 'pending' || statusStr == 'processing' || statusStr.isEmpty)) {
+        if (!hasOcrData && !isAnalyzed) {
+          debugPrint("Analysis for report $reportId is still pending ($statusStr), continuing polling...");
           return;
         }
 
-        if (isAnalyzed || statusStr == 'done' || statusStr == 'completed') {
-          _reportPollingTimers[reportId]?.cancel();
-          _reportPollingTimers.remove(reportId);
-          _reportPollAttempts.remove(reportId);
+        _reportPollingTimers[reportId]?.cancel();
+        _reportPollingTimers.remove(reportId);
+        _reportPollAttempts.remove(reportId);
 
-          LabAnalysisResult? aiResult;
-          final resultRaw = map['result'] ?? map['ai_result'];
-          if (resultRaw is Map && resultRaw.isNotEmpty) {
-            try {
-              final resultMap = Map<String, dynamic>.from(resultRaw);
-              if (resultMap.containsKey('current_report')) {
-                aiResult = LabAnalysisResult.fromJson(resultMap);
-              } else if (resultMap.containsKey('panels')) {
-                aiResult = LabAnalysisResult(
-                  currentReport: CurrentReport.fromJson(resultMap),
-                );
-              }
-            } catch (e) {
-              debugPrint("Parse ai result error: $e");
+        LabAnalysisResult? aiResult;
+        if (hasOcrData) {
+          try {
+            final resultMap = Map<String, dynamic>.from(resultRaw);
+            if (resultMap.containsKey('current_report')) {
+              aiResult = LabAnalysisResult.fromJson(resultMap);
+            } else if (resultMap.containsKey('panels')) {
+              aiResult = LabAnalysisResult(
+                currentReport: CurrentReport.fromJson(resultMap),
+              );
             }
+          } catch (e) {
+            debugPrint("Parse ai result error: $e");
           }
-
-          final updatedReports = state.reports.map((r) {
-            if (r.reportId != reportId) return r;
-            return r.copyWith(
-              isAnalyzed: true,
-              aiResult: aiResult ?? r.aiResult,
-            );
-          }).toList();
-
-          state = state.copyWith(reports: updatedReports);
-
-          _updateReportAnalysis(
-            reportId,
-            const ReportAnalysisState(status: ReportAnalysisStatus.ready),
-          );
         }
+
+        final updatedReports = state.reports.map((r) {
+          if (r.reportId != reportId) return r;
+          return r.copyWith(
+            isAnalyzed: true,
+            aiResult: aiResult ?? r.aiResult,
+          );
+        }).toList();
+
+        final updatedAnalysis = Map<String, ReportAnalysisState>.from(state.reportAnalysis);
+        updatedAnalysis[reportId] = const ReportAnalysisState(status: ReportAnalysisStatus.ready);
+
+        state = state.copyWith(
+          reports: updatedReports,
+          reportAnalysis: updatedAnalysis,
+        );
       },
     );
   }

@@ -50,7 +50,7 @@ class MedicalMarkdownView extends StatelessWidget {
             const TextStyle(
               fontFamily: 'Cairo',
               color: Color(0xFFE2E2E6),
-              fontSize: 13.5,
+              fontSize: 11.5,
               height: 1.7,
             ),
         customStylesBuilder: (element) {
@@ -72,7 +72,7 @@ class MedicalMarkdownView extends StatelessWidget {
                 'background-color': '#1E2630',
                 'color': '#00D2FF',
                 'font-weight': 'bold',
-                'font-size': '12.5px',
+                'font-size': '8px',
                 'padding': '10px 8px',
                 'border': '1px solid #3C494E',
                 'text-align': 'center',

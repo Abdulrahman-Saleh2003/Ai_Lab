@@ -57,6 +57,9 @@ dependencies:
 
   path: any
   shared_preferences: any
+  flutter_markdown: ^0.7.7+1
+  gpt_markdown: ^1.1.8
+  markdown: ^7.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

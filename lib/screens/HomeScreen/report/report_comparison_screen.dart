@@ -5,9 +5,9 @@ import 'package:ai_lab/controller/comparison/comparison_state.dart';
 import 'package:ai_lab/core/constant/app_size.dart';
 import 'package:ai_lab/models/home/Chat/message.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
+import 'package:ai_lab/core/widgets/medical_markdown_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ReportComparisonScreen extends ConsumerStatefulWidget {
@@ -575,36 +575,21 @@ class _ReportComparisonScreenState
                 color: _surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: _outlineVar),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: Directionality(
-                textDirection: ui.TextDirection.rtl,
-                child: Html(
-                  data: aiText,
-                  style: {
-                    "body": Style(
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                      color: Colors.white,
-                      fontSize: FontSize(14),
-                      lineHeight: const LineHeight(1.7),
-                      fontFamily: 'Cairo',
-                    ),
-                    "h2": Style(
-                      color: _primary,
-                      fontSize: FontSize(16),
-                      fontWeight: FontWeight.bold,
-                      margin: Margins.only(top: 12, bottom: 6),
-                    ),
-                    "h3": Style(
-                      color: const Color(0xFFEDB1FF),
-                      fontSize: FontSize(14),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    "li": Style(
-                      color: const Color(0xFFE2E2E6),
-                      fontSize: FontSize(13.5),
-                    ),
-                  },
+              child: MedicalMarkdownView(
+                data: aiText,
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  color: Color(0xFFE2E2E6),
+                  fontSize: 14,
+                  height: 1.7,
                 ),
               ),
             ),
@@ -694,18 +679,14 @@ class _ReportComparisonScreenState
                                     fontWeight: FontWeight.w600,
                                   ),
                                 )
-                              : Html(
+                              : MedicalMarkdownView(
                                   data: msg.text,
-                                  style: {
-                                    "body": Style(
-                                      margin: Margins.zero,
-                                      padding: HtmlPaddings.zero,
-                                      color: Colors.white,
-                                      fontSize: FontSize(13.5),
-                                      lineHeight: const LineHeight(1.6),
-                                      fontFamily: 'Cairo',
-                                    ),
-                                  },
+                                  style: const TextStyle(
+                                    fontFamily: 'Cairo',
+                                    color: Colors.white,
+                                    fontSize: 13.5,
+                                    height: 1.6,
+                                  ),
                                 ),
                         ),
                       ),

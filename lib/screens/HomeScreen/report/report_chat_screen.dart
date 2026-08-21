@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:ai_lab/controller/report_chat/report_chat_provider.dart';
 import 'package:ai_lab/controller/report_chat/report_chat_state.dart';
 import 'package:ai_lab/core/constant/app_size.dart';
+import 'package:ai_lab/core/widgets/medical_markdown_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -198,58 +199,67 @@ class ReportChatScreen extends ConsumerWidget {
                           fontSize: 13,
                         ),
                       )
-                    : Directionality(
-                        textDirection: ui.TextDirection.rtl,
-                        child: Html(
-                          data: message.answerHtml ??
-                              message.answer ??
-                              'لا توجد إجابة',
-                          style: {
-                            "body": Style(
-                              margin: Margins.zero,
-                              padding: HtmlPaddings.zero,
+                    : (message.answerHtml != null &&
+                            message.answerHtml!.contains('<'))
+                        ? Directionality(
+                            textDirection: ui.TextDirection.rtl,
+                            child: Html(
+                              data: message.answerHtml!,
+                              style: {
+                                "body": Style(
+                                  margin: Margins.zero,
+                                  padding: HtmlPaddings.zero,
+                                  color: Colors.white,
+                                  fontSize: FontSize(13.5),
+                                  lineHeight: const LineHeight(1.6),
+                                  fontFamily: 'Cairo',
+                                ),
+                                "h2": Style(
+                                  color: _primary,
+                                  fontSize: FontSize(17),
+                                  fontWeight: FontWeight.bold,
+                                  margin: Margins.only(top: 12, bottom: 6),
+                                  fontFamily: 'Cairo',
+                                ),
+                                "h3": Style(
+                                  color: _primary,
+                                  fontSize: FontSize(15),
+                                  fontWeight: FontWeight.bold,
+                                  margin: Margins.only(top: 10, bottom: 4),
+                                  fontFamily: 'Cairo',
+                                ),
+                                "table": Style(
+                                  border: Border.all(color: _outlineVar),
+                                  backgroundColor: const Color(0xFF0F1215),
+                                ),
+                                "th": Style(
+                                  padding: HtmlPaddings.all(6),
+                                  backgroundColor: _primary.withValues(alpha: 0.1),
+                                  color: _primary,
+                                  fontWeight: FontWeight.bold,
+                                  textAlign: TextAlign.center,
+                                ),
+                                "td": Style(
+                                  padding: HtmlPaddings.all(6),
+                                  color: Colors.white70,
+                                  textAlign: TextAlign.center,
+                                ),
+                                "strong": Style(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              },
+                            ),
+                          )
+                        : MedicalMarkdownView(
+                            data: message.answer ?? 'لا توجد إجابة',
+                            style: const TextStyle(
+                              fontFamily: 'Cairo',
                               color: Colors.white,
-                              fontSize: FontSize(13.5),
-                              lineHeight: const LineHeight(1.6),
-                              fontFamily: 'Cairo',
+                              fontSize: 13.5,
+                              height: 1.6,
                             ),
-                            "h2": Style(
-                              color: _primary,
-                              fontSize: FontSize(17),
-                              fontWeight: FontWeight.bold,
-                              margin: Margins.only(top: 12, bottom: 6),
-                              fontFamily: 'Cairo',
-                            ),
-                            "h3": Style(
-                              color: _primary,
-                              fontSize: FontSize(15),
-                              fontWeight: FontWeight.bold,
-                              margin: Margins.only(top: 10, bottom: 4),
-                              fontFamily: 'Cairo',
-                            ),
-                            "table": Style(
-                              border: Border.all(color: _outlineVar),
-                              backgroundColor: const Color(0xFF0F1215),
-                            ),
-                            "th": Style(
-                              padding: HtmlPaddings.all(6),
-                              backgroundColor: _primary.withValues(alpha: 0.1),
-                              color: _primary,
-                              fontWeight: FontWeight.bold,
-                              textAlign: TextAlign.center,
-                            ),
-                            "td": Style(
-                              padding: HtmlPaddings.all(6),
-                              color: Colors.white70,
-                              textAlign: TextAlign.center,
-                            ),
-                            "strong": Style(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          },
-                        ),
-                      ),
+                          ),
           ),
         ),
       ],

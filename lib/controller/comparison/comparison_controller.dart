@@ -99,7 +99,8 @@ class ComparisonController extends Notifier<ComparisonState> {
         );
       },
       (data) {
-        final answer = data['answer']?.toString() ??
+        final answer = data['answer_html']?.toString() ??
+            data['answer']?.toString() ??
             data['response']?.toString() ??
             data['analysis']?.toString() ??
             data['message']?.toString() ??

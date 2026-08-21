@@ -253,6 +253,22 @@ class ReportUser {
       nationalId: json['national_id']?.toString() ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'role': role,
+      'gender': gender,
+      if (birthDate != null) 'birth_date': birthDate!.toIso8601String(),
+      'phone': phone,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      if (lastLogin != null) 'last_login': lastLogin!.toIso8601String(),
+      'random_code': randomCode,
+      'national_id': nationalId,
+    };
+  }
 }
 
 class ReportPatient {
@@ -296,6 +312,18 @@ class ReportPatient {
       createdAt: DateTime.tryParse(json['created_at']?.toString() ?? ''),
       updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? ''),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'patient_id': patientId,
+      'user': user.toJson(),
+      'blood_type': bloodType,
+      if (height != null) 'height': height,
+      if (bmi != null) 'bmi': bmi,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
+    };
   }
 }
 
@@ -447,6 +475,32 @@ class LabReportItem {
       isAnalyzed: isAnalyzed ?? this.isAnalyzed,
       aiResult: aiResult ?? this.aiResult,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'report_id': reportId,
+      'patient': patient.toJson(),
+      if (reportDate != null) 'report_date': reportDate!.toIso8601String(),
+      if (uploadDate != null) 'upload_date': uploadDate!.toIso8601String(),
+      if (filePath != null) 'file_path': filePath,
+      'status': status.name,
+      'created_by': createdBy,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
+      'is_recent': isRecent,
+      'report_type': reportType,
+      'title': title,
+      'description': description,
+      'priority': priority,
+      if (cost != null) 'cost': cost,
+      'internal_notes': internalNotes,
+      'lab_name': labName,
+      'category': category,
+      'body_part': bodyPart,
+      'is_analyzed': isAnalyzed,
+      if (aiResult != null) 'ai_result': aiResult!.toJson(),
+    };
   }
 }
 

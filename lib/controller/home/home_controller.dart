@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/controller/home/home_state.dart';
+import 'package:ai_lab/core/shared/cache_helper.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
 import 'package:ai_lab/screens/HomeScreen/Home/home_screen.dart';
 import 'package:ai_lab/screens/HomeScreen/chat/chat_screen.dart';
@@ -34,6 +35,25 @@ class HomeController extends Notifier<HomeState> {
       _reportPollingTimers.clear();
     });
 
+    // 1. استرجاع التقارير المحفوظة دون اتصال فوراً (Cache-First)
+    final cached = CacheHelper.getCachedReports();
+    if (cached != null && cached.isNotEmpty) {
+      try {
+        final cachedReports = cached
+            .map((json) => LabReportItem.fromJson(json))
+            .toList();
+        Future.microtask(() {
+          state = state.copyWith(
+            reports: cachedReports,
+            reportsStatus: ReportsListStatus.loaded,
+          );
+        });
+      } catch (e) {
+        debugPrint("Error reading cached reports on start: $e");
+      }
+    }
+
+    // 2. تحديث متزامن مع السيرفر بالخلفية
     Future.microtask(() => loadRecentReportsForHome());
 
     return const HomeState();
@@ -357,6 +377,10 @@ class HomeController extends Notifier<HomeState> {
           );
         }).toList();
 
+        // حفظ التقارير مع نتيجة التحليل في الكاش
+        CacheHelper.cacheReports(
+            updatedReports.map((r) => r.toJson()).toList());
+
         final updatedAnalysis = Map<String, ReportAnalysisState>.from(state.reportAnalysis);
         updatedAnalysis[reportId] = const ReportAnalysisState(status: ReportAnalysisStatus.ready);
 
@@ -387,6 +411,20 @@ class HomeController extends Notifier<HomeState> {
 
     result.fold(
       (failure) {
+        // في حال فشل الاتصال بالسيرفر، نتحقق من وجود بيانات مخزنة محلياً (Offline Fallback)
+        final cached = CacheHelper.getCachedReports();
+        if (cached != null && cached.isNotEmpty) {
+          try {
+            final cachedReports =
+                cached.map((json) => LabReportItem.fromJson(json)).toList();
+            state = state.copyWith(
+              reportsStatus: ReportsListStatus.loaded,
+              reports: cachedReports,
+            );
+            return;
+          } catch (_) {}
+        }
+
         state = state.copyWith(
           reportsStatus: ReportsListStatus.error,
           reportsErrorMessage: "تعذر تحميل التقارير، تأكد من الاتصال",
@@ -402,6 +440,10 @@ class HomeController extends Notifier<HomeState> {
         }
 
         final parsed = LabReportsResponse.fromJson(Map<String, dynamic>.from(response));
+
+        // حفظ فوري بالـ Local Cache
+        CacheHelper.cacheReports(
+            parsed.results.map((r) => r.toJson()).toList());
 
         state = state.copyWith(
           reportsStatus: ReportsListStatus.loaded,

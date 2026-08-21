@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:ai_lab/controller/home/home_provider.dart';
 import 'package:ai_lab/controller/home/home_state.dart';
 import 'package:ai_lab/controller/report_details/report_details_state.dart';
+import 'package:ai_lab/core/shared/cache_helper.dart';
 import 'package:ai_lab/models/home/lab_report_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +14,21 @@ class ReportDetailsController extends Notifier<ReportDetailsState> {
   }
 
   void initialize(LabReportItem report) {
-    final initialResult = report.isAnalyzed ? report.aiResult : null;
+    LabAnalysisResult? initialResult =
+        report.isAnalyzed ? report.aiResult : null;
+    if (initialResult == null && report.reportId.isNotEmpty) {
+      final cachedJson = CacheHelper.getCachedReportAnalysis(report.reportId);
+      if (cachedJson != null) {
+        try {
+          initialResult = LabAnalysisResult.fromJson(cachedJson);
+        } catch (_) {}
+      }
+    }
+
     state = ReportDetailsState(
       report: report,
       result: initialResult,
-      showResults: report.isAnalyzed && initialResult != null,
+      showResults: initialResult != null,
     );
   }
 

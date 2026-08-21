@@ -125,6 +125,42 @@ class CacheHelper {
   static String? getUserPhone() => _box.read<String>('phone');
   static String? getUserLanguage() => _box.read<String>('Language');
 
+  // ─── التخزين المؤقت للتقارير والتحاليل دون اتصال (Offline Caching) ───
+  static const _cachedReportsKey = 'cached_lab_reports';
+  static const _cachedAnalysisPrefix = 'cached_analysis_';
+
+  static Future<void> cacheReports(List<Map<String, dynamic>> reports) async {
+    await _box.write(_cachedReportsKey, reports);
+  }
+
+  static List<Map<String, dynamic>>? getCachedReports() {
+    final raw = _box.read(_cachedReportsKey);
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((m) => Map<String, dynamic>.from(m))
+          .toList();
+    }
+    return null;
+  }
+
+  static Future<void> cacheReportAnalysis(
+      String reportId, Map<String, dynamic> analysis) async {
+    await _box.write('$_cachedAnalysisPrefix$reportId', analysis);
+  }
+
+  static Map<String, dynamic>? getCachedReportAnalysis(String reportId) {
+    final raw = _box.read('$_cachedAnalysisPrefix$reportId');
+    if (raw is Map) {
+      return Map<String, dynamic>.from(raw);
+    }
+    return null;
+  }
+
+  static Future<void> clearCachedReports() async {
+    await _box.remove(_cachedReportsKey);
+  }
+
   static Future<void> logoutUser() async {
     await _box.remove('token');
     await _box.remove('email');
@@ -134,8 +170,8 @@ class CacheHelper {
     await _box.remove('gender');
     await _box.remove('phone');
     await _box.remove('Image');
+    await _box.remove(_cachedReportsKey);
   }
 }
 
-// Alias for backward compatibility
 typedef CashHelper = CacheHelper;

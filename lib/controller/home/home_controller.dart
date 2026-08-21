@@ -7,7 +7,6 @@ import 'package:ai_lab/models/home/lab_report_models.dart';
 import 'package:ai_lab/screens/HomeScreen/Home/home_screen.dart';
 import 'package:ai_lab/screens/HomeScreen/chat/chat_screen.dart';
 import 'package:ai_lab/screens/HomeScreen/profile/profile.dart';
-import 'package:ai_lab/screens/HomeScreen/report/cbc_report_screen.dart';
 import 'package:ai_lab/screens/HomeScreen/report/report_screen.dart';
 import 'package:ai_lab/screens/HomeScreen/report/all_reports_page.dart';
 
@@ -20,7 +19,6 @@ class HomeController extends Notifier<HomeState> {
   Timer? _pollingTimer;
   int _pollAttempts = 0;
 
-  // تايمر + عدّاد محاولات مستقل لكل تقرير بالقائمة
   final Map<String, Timer> _reportPollingTimers = {};
   final Map<String, int> _reportPollAttempts = {};
 
@@ -45,7 +43,6 @@ class HomeController extends Notifier<HomeState> {
     const HomeScreen(),
     const AllReportsPage(),
     const CBCReportScreen(),
-    // const BloodCountReportPage(),
     const PatientProfilePage(),
     ChatScreen(),
   ];

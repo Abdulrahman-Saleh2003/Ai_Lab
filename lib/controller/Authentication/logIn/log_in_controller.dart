@@ -1,12 +1,10 @@
 import 'package:ai_lab/controller/Authentication/logIn/log_in_provider.dart';
-import 'package:ai_lab/core/class/crud.dart';
+import 'package:ai_lab/controller/Authentication/logIn/log_in_state.dart';
 import 'package:ai_lab/core/providers/app_providers.dart';
 import 'package:ai_lab/core/shared/cache_helper.dart';
-import 'package:ai_lab/data/remote/auth/login_auth.dart';
 import 'package:ai_lab/models/auth/patient_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'log_in_state.dart';
 
 class LoginController extends Notifier<LoginState> {
   late final TextEditingController emailController;
@@ -14,7 +12,6 @@ class LoginController extends Notifier<LoginState> {
   late final TextEditingController passwordController;
 
   final formKey = GlobalKey<FormState>();
-  final loginData = LoginData(crud: Crud());
 
   @override
   LoginState build() {

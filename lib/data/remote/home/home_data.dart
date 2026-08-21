@@ -81,9 +81,10 @@ class HomeData {
   }) async {
     final payload = <String, dynamic>{
       "question": question,
-      if (labJson != null) "lab_json": labJson,
-      if (previousJson != null) "previous_json": previousJson,
     };
+    if (labJson != null) payload["lab_json"] = labJson;
+    if (previousJson != null) payload["previous_json"] = previousJson;
+
     return await crud.postData(
       linkUrl: "${AppLinkApi.chatbotFullAnalysis}$reportId/$previousReportId/",
       data: payload,

@@ -11,14 +11,10 @@ class OnboardingController extends Notifier<OnboardingState> {
   OnboardingState build() {
     pageController = PageController();
 
-    // startAutoSlide();
-
     ref.onDispose(() {
       _timer?.cancel();
       pageController.dispose();
     });
-
-
 
     return const OnboardingState();
   }
@@ -31,14 +27,10 @@ class OnboardingController extends Notifier<OnboardingState> {
     if (state.currentPage < 3) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 400),
-        // milliseconds: 400
         curve: Curves.easeInOut,
       );
     } else {
-
       state = state.copyWith(goToLogin: true);
-
-
     }
   }
 

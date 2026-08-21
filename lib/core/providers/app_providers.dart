@@ -1,6 +1,11 @@
+import 'package:ai_lab/core/class/crud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ai_lab/core/shared/cache_helper.dart';
+
+final crudProvider = Provider<Crud>((ref) {
+  return Crud();
+});
 
 // ════════════════════════════════════════════
 //  THEME PROVIDER

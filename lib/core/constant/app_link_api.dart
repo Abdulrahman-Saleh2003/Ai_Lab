@@ -1,11 +1,6 @@
 class AppLinkApi {
   static const String urlSBase = "10.163.189.209";
-  // static const String urlSBase = "10.227.32.209";
-  // static const String urlSBase = "192.168.1.107";
-  // 10.163.189.209
-  // 192.168.1.107
-  // 10.163.189.209
-  // 127.0.0.1
+
   static const String urlServer = "http://$urlSBase:8000/";
   static const String urlServerImage = "http://$urlSBase:8000/api/";
   static const String urlServerGetImage = "http://$urlSBase:8000/";

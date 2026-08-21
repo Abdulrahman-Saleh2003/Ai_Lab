@@ -44,12 +44,6 @@ class BuildBottomNavigationHomeScreen extends StatelessWidget {
               active: currentIndex == 2,
               onTap: () => onTabChanged(2),
             ),
-            // NavItemHomeScreen(
-            //   icon: Icons.description,
-            //   label: 'nav_reports'.tr(),
-            //   active: currentIndex == 3,
-            //   onTap: () => onTabChanged(3),
-            // ),
             NavItemHomeScreen(
               icon: Icons.settings,
               label: 'nav_settings'.tr(),

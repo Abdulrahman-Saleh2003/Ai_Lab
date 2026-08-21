@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "440857055374",
+    "project_id": "labai-38839",
+    "storage_bucket": "labai-38839.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440857055374:android:9b4c3fc4ec5c63272df9df",
+        "android_client_info": {
+          "package_name": "com.example.ai_lab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9kn7dy0NLU58LWhwGzYadnzxnqK1jP0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

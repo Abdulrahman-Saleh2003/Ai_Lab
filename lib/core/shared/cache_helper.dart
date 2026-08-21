@@ -61,9 +61,9 @@ class CacheHelper {
   }
 
   static Future<void> putUserFCMToken({
-    required String userToken,
+    required String fCMToken,
   }) async {
-    await _box.write('fCMToken', userToken);
+    await _box.write('fCMToken', fCMToken);
   }
 
   static Future<void> putUserEmail({

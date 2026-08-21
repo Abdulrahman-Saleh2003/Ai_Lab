@@ -461,43 +461,54 @@ class _ReportComparisonScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Previous Value
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "previous_value".tr(),
-                        style: const TextStyle(fontSize: 11, color: _onSurfaceVar),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        prev != null ? '${prev.value} ${prev.unit}'.trim() : '—',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _onSurfaceVar,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "previous_value".tr(),
+                          style: const TextStyle(fontSize: 11, color: _onSurfaceVar),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          prev != null ? '${prev.value} ${prev.unit}'.trim() : '—',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: _onSurfaceVar,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                  const Icon(Icons.trending_flat, color: _onSurfaceVar, size: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(Icons.trending_flat, color: _onSurfaceVar, size: 20),
+                  ),
                   // Current Value
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "current_value".tr(),
-                        style: TextStyle(fontSize: 11, color: currTheme.textColor),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${curr.value} ${curr.unit}'.trim(),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: currTheme.textColor,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "current_value".tr(),
+                          style: TextStyle(fontSize: 11, color: currTheme.textColor),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          '${curr.value} ${curr.unit}'.trim(),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: currTheme.textColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -506,14 +517,21 @@ class _ReportComparisonScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (curr.referenceRange.isNotEmpty)
-                    Text(
-                      'المعدل الطبيعي: ${curr.referenceRange} ${curr.unit}'.trim(),
-                      style: const TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 11,
-                        color: _onSurfaceVar,
+                    Expanded(
+                      child: Text(
+                        'المعدل الطبيعي: ${curr.referenceRange} ${curr.unit}'.trim(),
+                        style: const TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          color: _onSurfaceVar,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                    )
+                  else
+                    const Spacer(),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
